@@ -1,5 +1,6 @@
 using System.Text.Json;
 using BattleShip.API;
+using BattleShip.API.DTO.Output;
 using BattleShip.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +27,8 @@ app.MapPost("/game", () =>
 
     gameService.ToJaggedArray(game.grids[0]);
     
-    return JsonSerializer.Serialize(game);
+    // return dto board output
+    return new BoardOutput(game.grids[0]);
 });
 
 app.MapGet("/game", () =>
