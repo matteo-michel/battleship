@@ -18,6 +18,7 @@ public class GameService
         Player player2 = new Player(playerB);
         Game game = new Game(player1, player2);
         games.Add(game);
+        game.Id = games.IndexOf(game);
         return game;
     }
     

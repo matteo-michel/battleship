@@ -27,8 +27,7 @@ app.MapPost("/game", () =>
 
     gameService.ToJaggedArray(game.grids[0]);
     
-    // return dto board output
-    return new BoardOutput(game.grids[0]);
+    return new GameOutput(game);
 });
 
 app.MapGet("/game", () =>
