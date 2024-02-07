@@ -1,6 +1,7 @@
 using System.Text.Json;
 using BattleShip.API;
 using BattleShip.API.DTO.Output;
+using BattleShip.API.Service;
 using BattleShip.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<GameService>();
+builder.Services.AddSingleton<WarService>();
 
 builder.Services.AddCors(options =>
 {
@@ -32,28 +33,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/game", () =>
+app.MapPost("/war", (WarService warService) =>
 {
-    var gameService = app.Services.GetRequiredService<GameService>();
-    Game game = gameService.CreateGame("Matteo", "Maid");
-
-    gameService.ToJaggedArray(game.grids[0]);
-
-    return new GameOutput(game);
-});
-
-app.MapGet("/game", () =>
-{
-    var gameService = app.Services.GetRequiredService<GameService>();
-    return gameService.ToJaggedArray(gameService.games.Last().grids[0]);
-});
-
-app.MapGet("/game/{id}", (int id) =>
-{
-    var gameService = app.Services.GetRequiredService<GameService>();
-    Game game = gameService.GetGame(id);
-
-    return game;
+    War war = warService.StartWar("Matteo", "Maid");
+    warService.ToJaggedArray(war.Seas[0]);
+    
+    return new WarOutput(war);
 });
 
 app.Run();
