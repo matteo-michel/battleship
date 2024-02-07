@@ -1,6 +1,6 @@
+using System.Text.Json;
 using BattleShip.API;
 using BattleShip.API.DTO.Output;
-using BattleShip.API.Service;
 using BattleShip.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,9 +8,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<WarService>();
+builder.Services.AddSingleton<GameService>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyOrigin",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
 
 var app = builder.Build();
+app.UseCors("AllowAnyOrigin");
 
 if (app.Environment.IsDevelopment())
 {
@@ -20,22 +32,28 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/war", (WarService warService) =>
+app.MapPost("/game", () =>
 {
-    War war = warService.StartWar("Matteo", "Maid");
-    warService.ToJaggedArray(war.Seas[0]);
-    
-    return new WarOutput(war);
+    var gameService = app.Services.GetRequiredService<GameService>();
+    Game game = gameService.CreateGame("Matteo", "Maid");
+
+    gameService.ToJaggedArray(game.grids[0]);
+
+    return new GameOutput(game);
 });
 
-app.MapPut("/game/{id}", (int id) =>
+app.MapGet("/game", () =>
 {
-    // get body from request
-    
-    
-    // var gameService = app.Services.GetRequiredService<GameService>();
-    // Game game = gameService.GetGame(id);
-    // return new GameOutput(game);
-}).WithName("GetGame");
+    var gameService = app.Services.GetRequiredService<GameService>();
+    return gameService.ToJaggedArray(gameService.games.Last().grids[0]);
+});
+
+app.MapGet("/game/{id}", (int id) =>
+{
+    var gameService = app.Services.GetRequiredService<GameService>();
+    Game game = gameService.GetGame(id);
+
+    return game;
+});
 
 app.Run();

@@ -1,7 +1,131 @@
 ﻿@page "/"
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@inject IHttpClientFactory ClientFactory
 
-<PageTitle>Home</PageTitle>
+<style>
+    .main {
+        display: flex;
+        flex-direction : row;
+        gap: 50px;
+      }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(10, 50px);
+        grid-template-rows: repeat(10, 50px);
+        gap: 2px;
+        border: 1px solid #000;
+        padding: 0%;
+        margin: 0%;
+    }
+    .cell {
+        background-color: #fff;
+        border: 1px solid #000;
+        text-align: center;
+        line-height: 50px;
+        margin : 0%;
+        padding: 0%;
+    }
+</style>
 
-<h1>Hello, world!</h1>
+<h1>Bataille navale</h1>
 
-Welcome to your new app.
+<div class="main">
+@if (grid is null){
+    <p>Loading...</p>
+  }
+  else{
+<div class="grid">
+    @for (int i = 0; i < 10; i++)
+    {
+        @for (int j = 0; j < 10; j++)
+        {
+          int row = i;
+          int col = j;
+          string data = grid[row,col];
+          Console.WriteLine(data);
+            <div class="cell">@data</div>
+        }
+    }
+</div>
+
+<div class="grid">
+    @for (int i = 0; i < 10; i++)
+    {
+        @for (int j = 0; j < 10; j++)
+        {
+          int row = i;
+                        int col = j;
+            <div @onclick="()=>ButtonPressed(row,col)" class="cell">x</div>
+        }
+    }
+</div>
+
+
+
+    }
+</div>
+
+
+@code{
+       private string[,] grid = new string[10,10];
+    private bool getBranchesError;
+    private bool shouldRender;
+
+    protected override bool ShouldRender() => shouldRender;
+
+    protected void ButtonPressed(int row, int col){
+        Console.WriteLine($"{row} {col}");
+      }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post,
+            "http://localhost:5023/game");
+
+        var client = ClientFactory.CreateClient();
+
+        var response = await client.SendAsync(request);
+        Console.WriteLine(response);
+
+        if (response.IsSuccessStatusCode)
+        {
+ using var responseStream = await response.Content.ReadAsStreamAsync();
+        
+         // Deserialize the response content as a jagged array of strings
+        string[][] jaggedGrid = await JsonSerializer.DeserializeAsync<string[][]>(responseStream);
+
+        // Convert the jagged array to a 2D array
+        grid = ConvertTo2DArray(jaggedGrid);       
+ 
+
+Console.WriteLine(grid[0,0]);
+        }
+        else
+        {
+            getBranchesError = true;
+        }
+
+        shouldRender = true;
+    }
+
+    private string[,] ConvertTo2DArray(string[][] jaggedArray)
+{
+    int rows = jaggedArray.Length;
+    int cols = jaggedArray[0].Length;
+
+    string[,] twoDArray = new string[rows, cols];
+
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            twoDArray[i, j] = jaggedArray[i][j];
+        }
+    }
+
+    return twoDArray;
+}
+
+
+  }
