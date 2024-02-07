@@ -2,15 +2,22 @@ namespace BattleShip.Models;
 
 public class Ship
 {
-    public Char letter { get; set; }
-    public int size { get; set; }
-    public Char orientation { get; set; }
-    public int[]? position { get; set; }
+    public Char Letter { get; set; }
+    public int Size { get; set; }
+    public Char Orientation { get; set; }
+    public int[]? Position { get; set; }
+    public int Hits { get; set; }
     
     public Ship(Char letter, int size, Char orientation)
     {
-        this.letter = letter;
-        this.size = size;
-        this.orientation = orientation;
+        Letter = letter;
+        Size = size;
+        Orientation = orientation;
+        Hits = 0;
+    }
+    
+    public bool IsSunken()
+    {
+        return Hits == Size;
     }
 }

@@ -16,4 +16,8 @@
     <ProjectReference Include="..\BattleShip.Models\BattleShip.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTO\Input\" />
+  </ItemGroup>
+
 </Project>

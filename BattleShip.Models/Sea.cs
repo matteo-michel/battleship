@@ -1,13 +1,13 @@
 namespace BattleShip.Models;
 
-public class Board
+public class Sea
 {
     public Char[,] Grid { get; set; }
-    public Player player { get; set; }
+    public Pirate Pirate { get; set; }
     
-    public Board(int size, Player player)
+    public Sea(int size, Pirate pirate)
     {
-        this.player = player;
+        Pirate = pirate;
 
         // fill Grid with \0
         Grid = new Char[size, size];
@@ -20,19 +20,19 @@ public class Board
             }
         }
         
-        foreach (Ship ship in player.ships)
+        foreach (Ship ship in pirate.Ships)
         {
             bool placed = false;
             while (!placed)
             {
                 int x = Random.Shared.Next(0, size);
                 int y = Random.Shared.Next(0, size);
-                if (ship.orientation == 'H')
+                if (ship.Orientation == 'H')
                 {
-                    if (x + ship.size < size)
+                    if (x + ship.Size < size)
                     {
                         bool canPlace = true;
-                        for (int i = 0; i < ship.size; i++)
+                        for (int i = 0; i < ship.Size; i++)
                         {
                             if (Grid[x + i, y] != '\0')
                             {
@@ -43,10 +43,10 @@ public class Board
 
                         if (canPlace)
                         {
-                            ship.position = new int[] {x, y};
-                            for (int i = 0; i < ship.size; i++)
+                            ship.Position = new int[] {x, y};
+                            for (int i = 0; i < ship.Size; i++)
                             {
-                                Grid[x + i, y] = ship.letter;
+                                Grid[x + i, y] = ship.Letter;
                             }
                             placed = true;
                         }
@@ -54,10 +54,10 @@ public class Board
                 }
                 else
                 {
-                    if (y + ship.size < size)
+                    if (y + ship.Size < size)
                     {
                         bool canPlace = true;
-                        for (int i = 0; i < ship.size; i++)
+                        for (int i = 0; i < ship.Size; i++)
                         {
                             if (Grid[x, y + i] != '\0')
                             {
@@ -68,10 +68,10 @@ public class Board
 
                         if (canPlace)
                         {
-                            ship.position = new int[] {x, y};
-                            for (int i = 0; i < ship.size; i++)
+                            ship.Position = new int[] {x, y};
+                            for (int i = 0; i < ship.Size; i++)
                             {
-                                Grid[x, y + i] = ship.letter;
+                                Grid[x, y + i] = ship.Letter;
                             }
                             placed = true;
                         }
