@@ -10,7 +10,19 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<GameService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyOrigin",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
+app.UseCors("AllowAnyOrigin");
 
 if (app.Environment.IsDevelopment())
 {
@@ -26,7 +38,7 @@ app.MapPost("/game", () =>
     Game game = gameService.CreateGame("Matteo", "Maid");
 
     gameService.ToJaggedArray(game.grids[0]);
-    
+
     return new GameOutput(game);
 });
 
