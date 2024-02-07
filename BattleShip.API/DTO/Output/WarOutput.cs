@@ -11,7 +11,7 @@ public class WarOutput
     {
         Id = war.Id ?? 0;
         
-        foreach (Ship ship in war.Seas[0].Pirate.Ships)
+        foreach (Ship ship in war.Seas[0].Player.Ships)
         {
             Ships.Add(new ShipOutput(ship));
         }

@@ -5,10 +5,8 @@ public class War
     public int? Id { get; set; }
     public List<Sea> Seas { get; set; }
     
-    public War(Pirate pirateA, Pirate pirateB)
+    public War(Player pirate, Player navy)
     {
-        Sea seaPirateA = new Sea(10, pirateA);
-        Sea seaPirateB = new Sea(10, pirateB);
-        Seas = new List<Sea> {seaPirateA, seaPirateB};
+        Seas = new List<Sea> {new Sea(10, pirate), new Sea(10, navy)};
     }
 }

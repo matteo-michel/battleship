@@ -1,3 +1,4 @@
+using BattleShip.API.DTO.Output;
 using BattleShip.Models;
 
 namespace BattleShip.API.Service;
@@ -11,19 +12,47 @@ public class WarService
         Wars = new List<War>();
     }
     
-    public War StartWar(string pirateA, string pirateB)
+    public War StartWar(string pirate, string navy)
     {
-        Pirate pirate1 = new Pirate(pirateA);
-        Pirate pirate2 = new Pirate(pirateB);
-        War war = new War(pirate1, pirate2);
+        War war = new War(new Pirate(pirate), new Navy(navy));
         Wars.Add(war);
         war.Id = Wars.IndexOf(war);
         return war;
     }
     
-    public War findWar(int id)
+    public BlastOutput processBlast(int warId, int[] position)
     {
-        return Wars[id];
+        War war = Wars[warId];
+        Sea pirateSea = war.Seas[0];
+        Sea navySea = war.Seas[1];
+        bool hit = false;
+        bool sunken = false;
+        foreach (Ship ship in navySea.Player.Ships)
+        {
+            if (ship.Position[0] == position[0] && ship.Position[1] == position[1])
+            {
+                hit = true;
+                ship.Hits++;
+                if (ship.Hits == ship.Size)
+                {
+                    sunken = true;
+                }
+            }
+        }
+        
+        Navy navy = navySea.Player as Navy;
+        
+        // check that NavySea.Player is an instance of Navy
+        if (navy is not Navy)
+        {
+            throw new Exception("Navy is not an instance of Navy");
+        }
+        
+        // get the first element of navy's BlastPosition and then remove it
+        int[] positionToAttack = navy.BlastLocations[0];
+        navy.BlastLocations.RemoveAt(0);
+        
+        return new BlastOutput(hit, sunken, positionToAttack);
     }
     
     public char[][] ToJaggedArray(Sea sea)
