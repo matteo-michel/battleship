@@ -38,7 +38,16 @@ app.MapPost("/war", (WarService warService) =>
     War war = warService.StartWar("Matteo", "Maid");
     warService.ToJaggedArray(war.Seas[0]);
     
-    return new WarOutput(war);
+    return new WarOutput
+    {
+        Id = war.Id ?? 0,
+        Ships = war.Seas[0].Player.Ships.Select(s => 
+            new ShipOutput
+            {
+                Letter = s.Letter.ToString(), 
+                Positions = s.getPosition()
+            }).ToList()
+    };
 });
 
 app.MapPost("/war/blast/{id}", (
@@ -53,7 +62,11 @@ app.MapPost("/war/blast/{id}", (
 app.MapGet("/war/status/{id}", (WarService warService, int id) =>
 {
     War war = warService.Wars[id];
-    return new WarStatusOutput(war);
+    return new WarStatusOutput
+    {
+        Over = war.Over,
+        winner = war.Seas.FirstOrDefault(s => s.Player.Ships.All(ship => ship.IsSunken()))?.Player
+    };
 });
 
 app.Run();

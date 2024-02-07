@@ -51,8 +51,13 @@ public class WarService
         // get the first element of navy's BlastPosition and then remove it
         int[] positionToAttack = navy.BlastLocations[0];
         navy.BlastLocations.RemoveAt(0);
-        
-        return new BlastOutput(hit, sunken, positionToAttack);
+
+        return new BlastOutput
+        {
+            Hit = hit,
+            Sunken = sunken,
+            Position = positionToAttack
+        };
     }
     
     public char[][] ToJaggedArray(Sea sea)

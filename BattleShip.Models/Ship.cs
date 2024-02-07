@@ -20,4 +20,26 @@ public class Ship
     {
         return Hits == Size;
     }
+
+    public int[][] getPosition()
+    {
+        int[][] positions = new int[Size][];
+        if (Orientation == 'H')
+        {
+            for (int i = 0; i < Size; i++)
+            {
+                positions[i] = new int[] {Position[0] + i, Position[1]};
+            }
+        }
+        else
+        {
+            for (int i = 0; i < Size; i++)
+            {
+                positions[i] = new int[] {Position[0], Position[1] + i};
+            }
+        }
+
+        return positions;
+    }
+        
 }
