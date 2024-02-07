@@ -3,11 +3,11 @@ namespace BattleShip.Models;
 public class Sea
 {
     public Char[,] Grid { get; set; }
-    public Pirate Pirate { get; set; }
+    public Player Player { get; set; }
     
-    public Sea(int size, Pirate pirate)
+    public Sea(int size, Player player)
     {
-        Pirate = pirate;
+        Player = player;
 
         // fill Grid with \0
         Grid = new Char[size, size];
@@ -20,7 +20,7 @@ public class Sea
             }
         }
         
-        foreach (Ship ship in pirate.Ships)
+        foreach (Ship ship in player.Ships)
         {
             bool placed = false;
             while (!placed)
