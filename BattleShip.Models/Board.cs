@@ -7,6 +7,7 @@ public class Board
     
     public Board(int size, Player player)
     {
+        this.player = player;
 
         // fill Grid with \0
         Grid = new Char[size, size];
@@ -42,6 +43,7 @@ public class Board
 
                         if (canPlace)
                         {
+                            ship.position = new int[] {x, y};
                             for (int i = 0; i < ship.size; i++)
                             {
                                 Grid[x + i, y] = ship.letter;
@@ -66,6 +68,7 @@ public class Board
 
                         if (canPlace)
                         {
+                            ship.position = new int[] {x, y};
                             for (int i = 0; i < ship.size; i++)
                             {
                                 Grid[x, y + i] = ship.letter;
