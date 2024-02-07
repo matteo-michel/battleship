@@ -33,7 +33,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/war", (WarService warService) =>
+app.MapGet("/war", (WarService warService) =>
 {
     War war = warService.StartWar("Matteo", "Maid");
     warService.ToJaggedArray(war.Seas[0]);
