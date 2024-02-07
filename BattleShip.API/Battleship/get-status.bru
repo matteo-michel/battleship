@@ -1,0 +1,18 @@
+meta {
+  name: get-status
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{url}}/war/blast/9
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "posX": 1,
+    "posY": 2
+  }
+}

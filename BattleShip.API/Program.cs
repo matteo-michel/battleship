@@ -1,9 +1,7 @@
-using System.Text.Json;
-using BattleShip.API;
-using BattleShip.API.DTO.Input;
-using BattleShip.API.DTO.Output;
 using BattleShip.API.Service;
 using BattleShip.Models;
+using BattleShip.Models.DTO.Input;
+using BattleShip.Models.DTO.Output;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,6 +48,12 @@ app.MapPost("/war/blast/{id}", (
     ) =>
 {
     return warService.processBlast(id, new int[] { position.PosX, position.PosY });
+});
+
+app.MapGet("/war/status/{id}", (WarService warService, int id) =>
+{
+    War war = warService.Wars[id];
+    return new WarStatusOutput(war);
 });
 
 app.Run();

@@ -1,5 +1,5 @@
-using BattleShip.API.DTO.Output;
 using BattleShip.Models;
+using BattleShip.Models.DTO.Output;
 
 namespace BattleShip.API.Service;
 

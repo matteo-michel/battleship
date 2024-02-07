@@ -1,6 +1,4 @@
-using BattleShip.Models;
-
-namespace BattleShip.API.DTO.Output;
+namespace BattleShip.Models.DTO.Output;
 
 public class WarOutput
 {

@@ -1,4 +1,4 @@
-namespace BattleShip.API.DTO.Input;
+namespace BattleShip.Models.DTO.Input;
 
 public class BlastInput
 {
