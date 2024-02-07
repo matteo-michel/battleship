@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using BattleShip.Models;
 @using System.Text.Json
 @using System.Text.Json.Serialization
 @inject IHttpClientFactory ClientFactory
@@ -43,7 +44,6 @@
           int row = i;
           int col = j;
           string data = grid[row,col];
-          Console.WriteLine(data);
             <div class="cell">@data</div>
         }
     }
@@ -56,7 +56,7 @@
         {
           int row = i;
                         int col = j;
-            <div @onclick="()=>ButtonPressed(row,col)" class="cell">x</div>
+            <div @onclick="()=>ButtonPressed(row,col)" class="cell"></div>
         }
     }
 </div>
@@ -81,25 +81,28 @@
     protected override async Task OnInitializedAsync()
     {
         var request = new HttpRequestMessage(HttpMethod.Post,
-            "http://localhost:5023/game");
+            "http://localhost:5023/war");
 
         var client = ClientFactory.CreateClient();
 
         var response = await client.SendAsync(request);
-        Console.WriteLine(response);
 
         if (response.IsSuccessStatusCode)
         {
  using var responseStream = await response.Content.ReadAsStreamAsync();
         
          // Deserialize the response content as a jagged array of strings
-        string[][] jaggedGrid = await JsonSerializer.DeserializeAsync<string[][]>(responseStream);
-
-        // Convert the jagged array to a 2D array
-        grid = ConvertTo2DArray(jaggedGrid);       
+        WarOutput gameResponse = await JsonSerializer.DeserializeAsync<WarOutput>(responseStream);
+ foreach (var ship in gameResponse.Ships)
+        {
+            foreach (var position in ship.Positions)
+            {
+                int row = position[0];
+                int col = position[1];
+                grid[row, col] = ship.Letter;
+            }
+        }
  
-
-Console.WriteLine(grid[0,0]);
         }
         else
         {
@@ -109,23 +112,7 @@ Console.WriteLine(grid[0,0]);
         shouldRender = true;
     }
 
-    private string[,] ConvertTo2DArray(string[][] jaggedArray)
-{
-    int rows = jaggedArray.Length;
-    int cols = jaggedArray[0].Length;
 
-    string[,] twoDArray = new string[rows, cols];
-
-    for (int i = 0; i < rows; i++)
-    {
-        for (int j = 0; j < cols; j++)
-        {
-            twoDArray[i, j] = jaggedArray[i][j];
-        }
-    }
-
-    return twoDArray;
-}
 
 
   }
