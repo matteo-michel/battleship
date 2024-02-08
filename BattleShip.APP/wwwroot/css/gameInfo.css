@@ -1,0 +1,11 @@
+.mainInfo {
+  color: white;
+  margin-top: 1rem;
+  width: 31rem;
+  background-color: #262522;
+  border-radius: 5px;
+}
+
+.nickname {
+  font-weight: bold;
+}

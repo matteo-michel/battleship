@@ -1,0 +1,78 @@
+body {
+  background-color: #302e2b;
+  color: white;
+}
+.main {
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(
+    10,
+    auto
+  ); /* You can adjust the number of columns as needed */
+  grid-template-rows: repeat(10, 1fr); /* Use fractional units for rows */
+  width: calc(85vh * (10 / 10));
+  height: 85vh; /* Set height to 100% of viewport height */
+  padding: 0%;
+  margin: 0%;
+}
+
+.gridPlayer {
+  display: grid;
+  grid-template-columns: repeat(10, 25px);
+  grid-template-rows: repeat(10, 25px);
+  padding: 0%;
+  margin: 0%;
+}
+.cell {
+  background-color: #b0e9fc;
+  text-align: center;
+  line-height: 50px;
+  margin: 0%;
+  padding: 0%;
+  user-select: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  background-image: url("/assets/Tiles/tile_73.png");
+}
+
+.isBorder {
+}
+
+.occupied {
+  background-color: red; /* Change color to the desired one */
+}
+
+.hit {
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url("/assets/Effects/explosion1.png");
+}
+
+.miss {
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url("/assets/Tiles/tile_miss.png");
+}
+
+.map {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: fit-content;
+}
+
+.mapPlayer {
+  width: 300px;
+  height: 300px;
+}
+
+.mapGrid {
+  width: fit-content;
+  height: fit-content;
+  margin: 1rem;
+}

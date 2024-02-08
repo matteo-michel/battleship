@@ -1,43 +1,31 @@
-﻿@page "/"
-@using BattleShip.Models;
+﻿@page "/game"
+@using BattleShip.Models.DTO.Output;
+@using BattleShip.Models.DTO.Input;
 @using System.Text.Json
 @using System.Text.Json.Serialization
 @using BattleShip.Models.DTO.Output
 @inject IHttpClientFactory ClientFactory
+@inject HttpClient Http
 
-<style>
-    .main {
-        display: flex;
-        flex-direction : row;
-        gap: 50px;
-      }
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(10, 50px);
-        grid-template-rows: repeat(10, 50px);
-        gap: 2px;
-        border: 1px solid #000;
-        padding: 0%;
-        margin: 0%;
-    }
-    .cell {
-        background-color: #fff;
-        border: 1px solid #000;
-        text-align: center;
-        line-height: 50px;
-        margin : 0%;
-        padding: 0%;
-    }
-</style>
 
-<h1>Bataille navale</h1>
 
-<div class="main">
+<link rel="stylesheet" href="css/grid.css">
+<link rel="stylesheet" href="css/gameInfo.css">
+
+
 @if (grid is null){
     <p>Loading...</p>
   }
   else{
-<div class="grid">
+@if(status){
+  <p>FIN DE LA GAME</p>
+}
+
+<div class="main">
+
+  <div class="map mapPlayer">
+
+<div class="gridPlayer mapGrid">
     @for (int i = 0; i < 10; i++)
     {
         @for (int j = 0; j < 10; j++)
@@ -45,56 +33,118 @@
           int row = i;
           int col = j;
           string data = grid[row,col];
-            <div class="cell">@data</div>
+          if(ennemyPlays[row,col] != null){
+            <div  class="cell @(ennemyPlays[row,col].Hit ? "hit" : ennemyPlays[row,col] != null ? "miss" : "") @(IsBorderCell(row, col, 10) ? "isBorder" : "")"></div>
+          }else{
+            <div  class="cell @(IsBorderCell(row, col, 10) ? "isBorder" : "")"></div>
+          }
+
         }
     }
 </div>
 
+</div>
+
+  <div class="map">
+
+<p class="nickname">Your ennemy</p>
 <div class="grid">
     @for (int i = 0; i < 10; i++)
     {
         @for (int j = 0; j < 10; j++)
         {
           int row = i;
-                        int col = j;
-            <div @onclick="()=>ButtonPressed(row,col)" class="cell"></div>
+          int col = j;
+          string ennemyData;
+          if(ennemyGrid[row, col] == true){
+            ennemyData = "O";
+          }else if(ennemyGrid[row, col] == false){
+            ennemyData = "X";
+          }else{
+            ennemyData = "";
+          }
+          <div @onclick="()=>ButtonPressed(row,col)" class="cell @(ennemyData == "O" ? "hit" : ennemyData == "X" ? "miss": "")"></div>
         }
     }
+
 </div>
 
+<p class="nickname">You</p>
+</div>
 
+<GameInfo />
 
+</div>
     }
-</div>
 
 
 @code{
-       private string[,] grid = new string[10,10];
+    private string[,] grid = new string[10,10];
+    private bool?[,] ennemyGrid = new bool?[10,10];
     private bool getBranchesError;
     private bool shouldRender;
+    private WarOutput gameResponse;
+    private AiBlastOutput[,] ennemyPlays = new AiBlastOutput[10,10];
+    private bool status;
 
     protected override bool ShouldRender() => shouldRender;
 
-    protected void ButtonPressed(int row, int col){
-        Console.WriteLine($"{row} {col}");
+
+    public bool IsBorderCell(int row, int col, int gridSize)
+{
+    // Check if the cell is on the top or bottom border
+    if (row == 0 || row == gridSize - 1)
+    {
+        return true;
+    }
+
+    // Check if the cell is on the left or right border
+    if (col == 0 || col == gridSize - 1)
+    {
+        return true;
+    }
+
+    // If the cell is not on any border
+    return false;
+}
+
+    protected async void ButtonPressed(int row, int col){
+    var requestData = new BlastInput { PosX = row, PosY = col };
+
+    // Serialize the object to JSON
+    var jsonRequest = JsonSerializer.Serialize(requestData);
+    
+    // Create a StringContent with the serialized JSON
+    var content = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json");
+    
+    // Send the POST request
+    var response = await Http.PostAsync($"http://localhost:5023/war/blast/{gameResponse.Id}", content);
+    
+    // Check if the response is successful
+    if (response.IsSuccessStatusCode)
+    {
+        // Deserialize the JSON response into WarOutput object
+        BlastOutput blastData = await response.Content.ReadFromJsonAsync<BlastOutput>();
+        ennemyGrid[row, col] = blastData.Hit;
+        ennemyPlays[blastData.AiBlast.X, blastData.AiBlast.Y] = blastData.AiBlast; 
+        status = blastData.Over;
+
+        StateHasChanged();
+    }
+    else
+    {
+        // Handle the case when the response is not successful
+        getBranchesError = true;
+        Console.WriteLine($"Error: {response.StatusCode}");
+    }
+
       }
 
     protected override async Task OnInitializedAsync()
     {
-        var request = new HttpRequestMessage(HttpMethod.Post,
-            "http://localhost:5023/war");
-
-        var client = ClientFactory.CreateClient();
-
-        var response = await client.SendAsync(request);
-
-        if (response.IsSuccessStatusCode)
-        {
- using var responseStream = await response.Content.ReadAsStreamAsync();
+        gameResponse = await Http.GetFromJsonAsync<WarOutput>("http://localhost:5023/war");
         
-         // Deserialize the response content as a jagged array of strings
-        WarOutput gameResponse = await JsonSerializer.DeserializeAsync<WarOutput>(responseStream);
- foreach (var ship in gameResponse.Ships)
+        foreach (var ship in gameResponse.Ships)
         {
             foreach (var position in ship.Positions)
             {
@@ -104,11 +154,6 @@
             }
         }
  
-        }
-        else
-        {
-            getBranchesError = true;
-        }
 
         shouldRender = true;
     }

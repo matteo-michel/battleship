@@ -1,0 +1,19 @@
+body {
+  padding: 0%;
+  margin: 0%;
+}
+
+.splash {
+  height: 100vh;
+  width: 100vw;
+  padding: 0%;
+  margin: 0%;
+  background-image: url("/assets/background.png");
+  background-repeat: no-repeat;
+  background-size: covr;
+}
+
+p {
+  padding: 0;
+  margin: 0;
+}
