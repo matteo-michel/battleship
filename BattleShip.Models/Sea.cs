@@ -5,6 +5,8 @@ public class Sea
     public Char[,] Grid { get; set; }
     public Player Player { get; set; }
     
+    public List<Hit> Hits { get; set; } = new List<Hit>();
+    
     public Sea(int size, Player player)
     {
         Player = player;
@@ -83,6 +85,22 @@ public class Sea
 
     public Ship? Hit(int x, int y)
     {
+        // // check if already hit
+        foreach (Hit hit in Hits)
+        {
+            if (hit.X == x && hit.Y == y)
+            {
+                return null;
+            }
+        }
+        
+        Hits.Add(new Hit()
+        {
+            X = x,
+            Y = y,
+            Reached = Grid[x, y] != '\0'
+        });
+        
         if (Grid[x, y] != '\0')
         {
             foreach (Ship ship in Player.Ships)

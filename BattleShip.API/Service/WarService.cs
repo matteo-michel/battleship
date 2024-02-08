@@ -1,5 +1,4 @@
 using BattleShip.Models;
-using BattleShip.Models.DTO.Input;
 using BattleShip.Models.DTO.Output;
 
 namespace BattleShip.API.Service;
@@ -40,8 +39,6 @@ public class WarService
 
         Sea pirateSea = war.Seas[0];
         Ship? pirateShip = pirateSea.Hit(positionToAttack[0], positionToAttack[1]);
-
-        Console.WriteLine(war.Over);
         
         return new BlastOutput
         {
