@@ -1,4 +1,5 @@
 using BattleShip.Models;
+using BattleShip.Models.DTO.Input;
 using BattleShip.Models.DTO.Output;
 
 namespace BattleShip.API.Service;
@@ -22,45 +23,36 @@ public class WarService
     
     public BlastOutput processBlast(int warId, int[] position)
     {
+        
         War war = Wars[warId];
-        Sea pirateSea = war.Seas[0];
         Sea navySea = war.Seas[1];
-        bool hit = false;
+        Ship? ship = navySea.Hit(position[0], position[1]);
         bool sunken = false;
-        foreach (Ship ship in navySea.Player.Ships)
+        if (ship is not null)
         {
-            if (ship.Position[0] == position[0] && ship.Position[1] == position[1])
-            {
-                hit = true;
-                ship.Hits++;
-                if (ship.Hits == ship.Size)
-                {
-                    sunken = true;
-                }
-            }
+            sunken = ship.IsSunken();
         }
+        
         
         Navy navy = navySea.Player as Navy;
         
-        // check that NavySea.Player is an instance of Navy
         if (navy is not Navy)
         {
             throw new Exception("Navy is not an instance of Navy");
         }
         
-        // get the first element of navy's BlastPosition and then remove it
         int[] positionToAttack = navy.BlastLocations[0];
         navy.BlastLocations.RemoveAt(0);
 
         return new BlastOutput
         {
-            Hit = hit,
+            Hit = ship is not null,
             Sunken = sunken,
             Position = positionToAttack
         };
     }
     
-    public char[][] ToJaggedArray(Sea sea)
+    public char[][] ToJaggedArray(Sea sea, Sea sea2)
     {
         Console.WriteLine();
         char[][] jaggedGrid = new char[10][];
@@ -72,9 +64,27 @@ public class WarService
                 Console.Write((sea.Grid[i, j] == '\0' ? "*" : sea.Grid[i, j]) + " ");
                 jaggedGrid[i][j] = sea.Grid[i, j];
             }
+            Console.Write("  ");
+            for (int j = 0; j < 10; j++)
+            {
+                Console.Write((sea2.Grid[i, j] == '\0' ? "*" : sea2.Grid[i, j]) + " ");
+                jaggedGrid[i][j] = sea.Grid[i, j];
+            }
             Console.WriteLine();
         }
 
         return jaggedGrid;
+    }
+    
+    public static void diplayArray(int[][] array)
+    {
+        foreach (int[] row in array)
+        {
+            foreach (int cell in row)
+            {
+                Console.Write(cell + " ");
+            }
+            Console.WriteLine();
+        }
     }
 }

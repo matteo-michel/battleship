@@ -36,7 +36,7 @@ app.UseHttpsRedirection();
 app.MapGet("/war", (WarService warService) =>
 {
     War war = warService.StartWar("Matteo", "Maid");
-    warService.ToJaggedArray(war.Seas[0]);
+    warService.ToJaggedArray(war.Seas[0], war.Seas[1]);
     
     return new WarOutput
     {

@@ -80,4 +80,21 @@ public class Sea
             }
         }
     }
+
+    public Ship? Hit(int x, int y)
+    {
+        if (Grid[x, y] != '\0')
+        {
+            foreach (Ship ship in Player.Ships)
+            {
+                if (ship.Letter == Grid[x, y] && !ship.IsSunken())
+                {
+                    ship.Hits++;
+                    return ship;
+                }
+            }
+        }
+
+        return null;
+    }
 }
