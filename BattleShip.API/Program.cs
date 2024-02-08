@@ -10,6 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<WarService>();
+builder.Services.AddSingleton<SeaService>();
 
 builder.Services.AddCors(options =>
 {
@@ -57,6 +58,21 @@ app.MapPost("/war/blast/{id}", (
     ) =>
 {
     return warService.processBlast(id, new int[] { position.PosX, position.PosY });
+});
+
+app.MapGet("/war/history/{id}", (
+    WarService warService, 
+    SeaService seaService, 
+    int id,
+    [FromQuery] int? wave)  =>
+{
+    War war = warService.Wars[id];
+    return new WarHistoryOutput
+    {
+        AllySea = seaService.GetSeaHistory(war.Seas[0], wave),
+        EnemySea = seaService.GetSeaHistory(war.Seas[1], wave)
+        
+    };
 });
 
 app.Run();
