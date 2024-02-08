@@ -59,14 +59,4 @@ app.MapPost("/war/blast/{id}", (
     return warService.processBlast(id, new int[] { position.PosX, position.PosY });
 });
 
-app.MapGet("/war/status/{id}", (WarService warService, int id) =>
-{
-    War war = warService.Wars[id];
-    return new WarStatusOutput
-    {
-        Over = war.Over,
-        winner = war.Seas.FirstOrDefault(s => s.Player.Ships.All(ship => ship.IsSunken()))?.Player
-    };
-});
-
 app.Run();

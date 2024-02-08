@@ -23,15 +23,9 @@ public class WarService
     
     public BlastOutput processBlast(int warId, int[] position)
     {
-        
         War war = Wars[warId];
         Sea navySea = war.Seas[1];
-        Ship? ship = navySea.Hit(position[0], position[1]);
-        bool sunken = false;
-        if (ship is not null)
-        {
-            sunken = ship.IsSunken();
-        }
+        Ship? navyShip = navySea.Hit(position[0], position[1]);
         
         
         Navy navy = navySea.Player as Navy;
@@ -44,11 +38,24 @@ public class WarService
         int[] positionToAttack = navy.BlastLocations[0];
         navy.BlastLocations.RemoveAt(0);
 
+        Sea pirateSea = war.Seas[0];
+        Ship? pirateShip = pirateSea.Hit(positionToAttack[0], positionToAttack[1]);
+
+        Console.WriteLine(war.Over);
+        
         return new BlastOutput
         {
-            Hit = ship is not null,
-            Sunken = sunken,
-            Position = positionToAttack
+            Over = war.Over,
+            Winner = war.Seas.FirstOrDefault(s => s.Player.Ships.All(ship => ship.IsSunken()))?.Player,
+            Hit = navyShip is not null,
+            Sunken = navyShip is not null && navyShip.IsSunken(),
+            AiBlast = new AiBlastOutput()
+            {
+                X = positionToAttack[0],
+                Y = positionToAttack[1],
+                Hit = pirateShip is not null,
+                Sunken = pirateShip is not null && pirateShip.IsSunken()
+            }
         };
     }
     
