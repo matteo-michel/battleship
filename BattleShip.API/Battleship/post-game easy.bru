@@ -1,0 +1,17 @@
+meta {
+  name: post-game easy
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{url}}/war
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "difficulty": 0
+  }
+}

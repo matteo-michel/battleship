@@ -121,12 +121,6 @@ public class SeaService
     
     public Ship? Hit(Sea sea, int x, int y)
     {
-
-        if (IsHitInHistory(sea, x, y))
-        {
-            return null;
-        }
-        
         sea.Hits.Add(new Hit()
         {
             X = x,

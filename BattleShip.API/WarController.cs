@@ -1,5 +1,7 @@
+using System.Drawing;
 using BattleShip.API.Service;
 using BattleShip.Models;
+using BattleShip.Models.DTO.Enum;
 using BattleShip.Models.DTO.Input;
 using BattleShip.Models.DTO.Output;
 using Microsoft.AspNetCore.Mvc;
@@ -10,20 +12,18 @@ public static class WarController
 {
     public static void RegisterWarController(this WebApplication app)
     {
-        app.MapGet("/war", (WarService warService, SeaService seaService, PirateService pirateService) =>
+        app.MapGet("/war", (
+            WarService warService,
+            [FromBody] WarInput warInput
+        ) =>
         {
-            Pirate pirate = pirateService.instanciatePirate("Matteo");
-            Pirate navy = pirateService.instanciatePirate("Maid", true);
-            
-            Sea pirateSea = seaService.CreateSea(10, pirate);
-            Sea navySea = seaService.CreateSea(10, navy);
-            
-            War war = warService.StartWar(pirateSea, navySea);
+            var war = warService.StartWar(warInput.Difficulty);
             warService.ToJaggedArray(war.Seas[0], war.Seas[1]);
-    
+            
             return new WarOutput
             {
                 Id = war.Id ?? 0,
+                gridSize = war.Seas[0].Size,
                 Ships = war.Seas[0].Pirate.Ships.Select(s => 
                     new ShipOutput
                     {
@@ -37,6 +37,7 @@ public static class WarController
                     }).ToList()
             };
         });
+        
         app.MapPost("/war/blast/{id}", (
             WarService warService,
             SeaService seaService,
@@ -45,13 +46,14 @@ public static class WarController
             [FromBody] BlastInput position
         ) =>
         {
-            War war = warService.Wars[id];
-            Ship? navyShip = seaService.Hit(war.Seas[1], position.PosX, position.PosY);
-
-            if (navyShip is null)
+            var war = warService.Wars[id];
+            
+            if (seaService.IsHitInHistory(war.Seas[1], position.PosX, position.PosY))
             {
-                throw new Exception("Already hit this position!");
+                throw new Exception("You already hit this position!");
             }
+            
+            Ship? navyShip = seaService.Hit(war.Seas[1], position.PosX, position.PosY);
             
             BlastOutput output = new BlastOutput()
             {
