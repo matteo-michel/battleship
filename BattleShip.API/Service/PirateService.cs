@@ -48,4 +48,37 @@ public class PirateService
         pirate.BlastLocations = pirate.BlastLocations.OrderBy(x => Random.Shared.Next()).ToList();
         return pirate;
     }
+
+    public Pirate ReorderBlastLocationsWithHitLocation(Pirate pirate, int x, int y)
+    {
+        // based on the current blast location, reorder the list to put the hit locations near x and y first
+        pirate.BlastLocations!.Sort((pos1, pos2) =>
+        {
+            double distance1 = AbsoluteDistanceBetween2Positions(pos1, [x, y]);
+            double distance2 = AbsoluteDistanceBetween2Positions(pos2, [x, y]);
+            
+            return distance1.CompareTo(distance2);
+        });
+
+        Console.WriteLine("Blast locations");
+        foreach (var pos in pirate.BlastLocations)
+        {
+            Console.WriteLine($"({pos[0]}, {pos[1]})");
+        }
+        
+        return pirate;
+    }
+    
+    static double AbsoluteDistanceBetween2Positions(int[] pos1, int[] pos2)
+    {
+        int deltaX = pos1[0] - pos2[0];
+        int deltaY = pos1[1] - pos2[1];
+        return Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+    }
+
+    public Pirate reoderBlastLocation(Pirate pirate)
+    {
+        pirate.BlastLocations = pirate.BlastLocations!.OrderBy(x => Random.Shared.Next()).ToList();
+        return pirate;
+    }
 }

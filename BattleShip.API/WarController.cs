@@ -37,18 +37,22 @@ public static class WarController
                     }).ToList()
             };
         });
-
         app.MapPost("/war/blast/{id}", (
             WarService warService,
             SeaService seaService,
+            PirateService pirateService,
             int id,
             [FromBody] BlastInput position
         ) =>
         {
-            
             War war = warService.Wars[id];
             Ship? navyShip = seaService.Hit(war.Seas[1], position.PosX, position.PosY);
 
+            if (navyShip is null)
+            {
+                throw new Exception("Already hit this position!");
+            }
+            
             BlastOutput output = new BlastOutput()
             {
                 Over = war.Over,
@@ -63,7 +67,15 @@ public static class WarController
                 war.Seas[1].Pirate.BlastLocations?.RemoveAt(0);
                 
                 Ship? pirateShip = seaService.Hit(war.Seas[0], positionToAttack[0], positionToAttack[1]);
-
+                
+                if (pirateShip is not null)
+                {
+                    war.Seas[1].Pirate = (!pirateShip.IsSunken()
+                        ? pirateService.ReorderBlastLocationsWithHitLocation(war.Seas[1].Pirate, positionToAttack[0],
+                            positionToAttack[1])
+                        : pirateService.reoderBlastLocation(war.Seas[1].Pirate));
+                }
+                
                 output.AiBlast = new AiBlastOutput()
                 {
                     X = positionToAttack[0],
