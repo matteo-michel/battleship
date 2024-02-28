@@ -12,7 +12,7 @@ public static class WarController
 {
     public static void RegisterWarController(this WebApplication app)
     {
-        app.MapGet("/war", (
+        app.MapPost("/war", (
             WarService warService,
             [FromBody] WarInput warInput
         ) =>

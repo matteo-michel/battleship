@@ -4,8 +4,14 @@ meta {
   seq: 3
 }
 
-get {
+post {
   url: {{url}}/war
-  body: none
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "difficulty": 1
+  }
 }
