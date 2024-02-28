@@ -70,7 +70,7 @@ public static class WarController
                 
                 Ship? pirateShip = seaService.Hit(war.Seas[0], positionToAttack[0], positionToAttack[1]);
                 
-                if (pirateShip is not null)
+                if (pirateShip is not null && war.Difficulty == Difficulty.Hard)
                 {
                     war.Seas[1].Pirate = (!pirateShip.IsSunken()
                         ? pirateService.ReorderBlastLocationsWithHitLocation(war.Seas[1].Pirate, positionToAttack[0],
