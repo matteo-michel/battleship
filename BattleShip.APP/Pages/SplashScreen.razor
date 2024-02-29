@@ -6,6 +6,11 @@
 <div class="splash">
   <div class="menu">
     <h1>BattleShip</h1>
+    
+      <div class="difficulty">
+        <label for="pseudo">Votre pseudo</label>
+        <input type="text" id="pseudo" name="pseudo" value="" @onchange="PseudoChanged">
+      </div>
     <legend>Difficulté</legend>
 <div class="difficulty">
       <div>
@@ -25,10 +30,12 @@
 
 
 @code{
+
     [Inject]
     private NavigationManager NavigationManager { get; set; }
 
     private string difficulty = "easy"; // Default value
+    private string pseudo = "";
     private bool IsEasyChecked => difficulty == "easy";
     private bool IsHardChecked => difficulty == "hard";
 
@@ -39,11 +46,15 @@
     }
 
 
+    private void PseudoChanged(ChangeEventArgs e){
+      pseudo = e.Value.ToString();
+    }
+
     // Method to navigate to another page
     private void NavigateToGame()
     {
         // Navigate to the desired page
-        NavigationManager.NavigateTo($"/game/{difficulty}");
+        NavigationManager.NavigateTo($"/game/{difficulty}/{pseudo}");
     }
 
     private void NavigateToLeaderboard(){
