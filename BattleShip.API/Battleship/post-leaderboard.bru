@@ -1,0 +1,18 @@
+meta {
+  name: post-leaderboard
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{url}}/leaderboard
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "jrm la grosse merde",
+    "score": 1
+  }
+}

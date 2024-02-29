@@ -9,6 +9,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<WarService>();
 builder.Services.AddSingleton<SeaService>();
 builder.Services.AddSingleton<PirateService>();
+builder.Services.AddControllers();
+builder.Services.AddDbContext<LeaderboardContext>();
 
 builder.Services.AddCors(options =>
 {
@@ -22,6 +24,14 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var leaderboardContext = scope.ServiceProvider.GetRequiredService<LeaderboardContext>();
+    leaderboardContext.Database.EnsureCreated();
+    leaderboardContext.SaveChanges();
+}
+
 app.UseCors("AllowAnyOrigin");
 
 if (app.Environment.IsDevelopment())
@@ -33,5 +43,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.RegisterWarController();
+app.MapControllers();
 
 app.Run();

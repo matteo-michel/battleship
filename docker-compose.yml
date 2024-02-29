@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+  sqlite:
+    image: bitnami/sqlite
+    environment:
+      - SQLITE_DATABASE=leaderboard.db
+    ports:
+      - '1433:1433'
