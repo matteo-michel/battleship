@@ -1,0 +1,41 @@
+@page "/leaderboard"
+@using BattleShip.Models.DTO.Output;
+@inject IHttpClientFactory ClientFactory
+@inject HttpClient Http
+
+
+<link rel="stylesheet" href="css/leaderboard.css">
+
+
+
+<p></p>
+<div class="leaderboard">
+    <h1>Leaderboard</h1>
+    @for (int i = 0; i < @Leaderboards.Length; i++)
+      {
+        int index = i;
+        <div class="leaderboard-item">
+            <div class="leaderboard-item-name">@Leaderboards[index].Name</div>
+            <div class="leaderboard-item-score">@Leaderboards[index].Score</div>
+        </div>
+      }
+</div>
+@code{
+
+
+        protected LeaderBoardOutput[] Leaderboards;
+
+
+
+    protected override async Task OnInitializedAsync()
+        {
+          var leaderboardResponse = await Http.GetFromJsonAsync<LeaderBoardOutput[]>($"http://localhost:5023/leaderboard");
+    
+          // Store history data in a variable named history
+          Leaderboards = leaderboardResponse;
+          StateHasChanged(); // Ensure the component re-renders after data is fetched
+        }
+
+  
+  
+}

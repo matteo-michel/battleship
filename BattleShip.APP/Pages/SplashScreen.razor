@@ -1,14 +1,54 @@
 @page "/"
 
-<link rel="stylesheet" href="css/splash.css">
+<link rel="stylesheet" href="css/grid.css">
 
 
 <div class="splash">
-  <p>ok</p>
+  <div class="menu">
+    <h1>BattleShip</h1>
+    <legend>Difficulté</legend>
+<div class="difficulty">
+      <div>
+        <input type="radio" id="easy" name="difficulty" value="easy" checked="@IsEasyChecked" @onchange="RadioChanged">
+        <label for="easy">Facile</label>
+      </div>
+      <div>
+        <input type="radio" id="hard" name="difficulty" value="hard" checked="@IsHardChecked" @onchange="RadioChanged">
+        <label for="hard">Difficile</label>
+      </div>
+    </div>    <div>
+      <button @onclick="NavigateToGame" class="playButton">Jouer</button>
+      <button @onclick="NavigateToLeaderboard" class="leaderboardButton">Leaderboard</button>
+    </div>
+  </div>
 </div>
 
 
 @code{
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
 
+    private string difficulty = "easy"; // Default value
+    private bool IsEasyChecked => difficulty == "easy";
+    private bool IsHardChecked => difficulty == "hard";
+
+        // Method to handle radio change event
+    private void RadioChanged(ChangeEventArgs e)
+    {
+        difficulty = e.Value.ToString();
+    }
+
+
+    // Method to navigate to another page
+    private void NavigateToGame()
+    {
+        // Navigate to the desired page
+        NavigationManager.NavigateTo($"/game/{difficulty}");
+    }
+
+    private void NavigateToLeaderboard(){
+
+      NavigationManager.NavigateTo($"/leaderboard");
+    }
 
 }

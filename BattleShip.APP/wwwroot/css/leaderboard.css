@@ -1,0 +1,35 @@
+body {
+  background-color: #302e2b;
+  color: white;
+}
+
+.leaderboard {
+  background-color: #333;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+  width: 60%;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.leaderboard-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #666;
+}
+
+.leaderboard-item:last-child {
+  border-bottom: none;
+}
+
+.leaderboard-item-name,
+.leaderboard-item-score {
+  font-size: 18px;
+  color: #fff;
+}
+
+.leaderboard-item-score {
+  font-weight: bold;
+}

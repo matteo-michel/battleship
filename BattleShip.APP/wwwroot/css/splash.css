@@ -10,7 +10,10 @@ body {
   margin: 0%;
   background-image: url("/assets/background.png");
   background-repeat: no-repeat;
-  background-size: covr;
+  background-size: cover;
+}
+
+.menu {
 }
 
 p {

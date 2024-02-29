@@ -66,6 +66,69 @@ body {
   height: fit-content;
 }
 
+.splash {
+  background-color: #333;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.menu {
+  background-color: #444;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.menu legend {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.menu h1 {
+  margin: 0;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.difficulty {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.difficulty div {
+  margin: 0 10px;
+}
+
+.difficulty label {
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.playButton,
+.leaderboardButton {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.playButton:hover,
+.leaderboardButton:hover {
+  background-color: #0056b3;
+}
 .mapPlayer {
   width: 300px;
   height: 300px;

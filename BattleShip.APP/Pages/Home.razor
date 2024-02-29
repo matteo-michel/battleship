@@ -1,4 +1,4 @@
-﻿@page "/game"
+﻿@page "/game/{DifficultyLevel}"
 @using BattleShip.Models.DTO.Output;
 @using BattleShip.Models.DTO.Input;
 @using BattleShip.Models.DTO.Enum;
@@ -149,6 +149,9 @@
     public WarHistoryOutput history;
     public WarHistoryOutput preview;
 
+    [Parameter]
+    public string DifficultyLevel { get ; set;}
+
     protected override bool ShouldRender() => shouldRender;
 
     private async void CallbackMethod(int wave)
@@ -241,7 +244,7 @@
     protected override async Task OnInitializedAsync()
     {
 
-        var requestData = new WarInput { Difficulty = Difficulty.Hard };
+        var requestData = new WarInput { Difficulty = DifficultyLevel == "hard" ? Difficulty.Hard : Difficulty.Easy };
 
     var jsonRequest = JsonSerializer.Serialize(requestData);
     
