@@ -1,5 +1,7 @@
 using BattleShip.API;
 using BattleShip.API.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,16 +14,33 @@ builder.Services.AddSingleton<PirateService>();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<LeaderboardContext>();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAnyOrigin",
-        builder =>
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("AllowAnyOrigin",
+//         builder =>
+//         {
+//             builder.AllowAnyOrigin()
+//                    .AllowAnyHeader()
+//                    .AllowAnyMethod();
+//         });
+// });
+
+builder.Services.AddCors();
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(c =>
+    {
+        c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
+        c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
         {
-            builder.AllowAnyOrigin()
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
-});
+            ValidAudience = builder.Configuration["Auth0:Audience"],
+            ValidIssuer = $"https://{builder.Configuration["Auth0:Domain"]}"
+        };
+    });
 
 var app = builder.Build();
 
@@ -40,7 +59,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+app.UseCors((c) =>
+{
+    c.AllowAnyMethod();
+    c.AllowAnyHeader();
+    c.AllowAnyOrigin();
+});
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.RegisterWarController();
 app.MapControllers();

@@ -1,6 +1,9 @@
 @page "/leaderboard"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using BattleShip.Models.DTO.Output;
-@inject IHttpClientFactory ClientFactory
+
 @inject HttpClient Http
 
 
@@ -23,19 +26,17 @@
 @code{
 
 
-        protected LeaderBoardOutput[] Leaderboards;
-
-
-
-    protected override async Task OnInitializedAsync()
-        {
-          var leaderboardResponse = await Http.GetFromJsonAsync<LeaderBoardOutput[]>($"http://localhost:5023/leaderboard");
+    protected LeaderBoardOutput[] Leaderboards;
     
-          // Store history data in a variable named history
-          Leaderboards = leaderboardResponse;
-          StateHasChanged(); // Ensure the component re-renders after data is fetched
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Leaderboards = await Http.GetFromJsonAsync<LeaderBoardOutput[]>("leaderboard");
         }
-
-  
-  
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
 }

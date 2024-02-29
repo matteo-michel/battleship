@@ -162,7 +162,7 @@
       }else{
 
       Console.WriteLine($"WAVE : {wave}");
-        var historyResponse = await Http.GetFromJsonAsync<WarHistoryOutput>($"http://localhost:5023/war/history/{gameResponse.Id}?wave={wave}");
+        var historyResponse = await Http.GetFromJsonAsync<WarHistoryOutput>($"https://localhost:5023/war/history/{gameResponse.Id}?wave={wave}");
     
     
         // Store history data in a variable named history
@@ -196,7 +196,7 @@
 
         Console.WriteLine(history); 
         // Make the HTTP request to get history data
-        var historyResponse = await Http.GetFromJsonAsync<WarHistoryOutput>($"http://localhost:5023/war/history/{gameResponse.Id}");
+        var historyResponse = await Http.GetFromJsonAsync<WarHistoryOutput>($"https://localhost:5023/war/history/{gameResponse.Id}");
     
     
         Console.WriteLine(historyResponse.AllySea.Hits.Count);
@@ -217,7 +217,7 @@
     var content = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json");
     
     // Send the POST request
-    var response = await Http.PostAsync($"http://localhost:5023/war/blast/{gameResponse.Id}", content);
+    var response = await Http.PostAsync($"https://localhost:5023/war/blast/{gameResponse.Id}", content);
     
     // Check if the response is successful
     if (response.IsSuccessStatusCode)
@@ -251,7 +251,7 @@
     // Create a StringContent with the serialized JSON
     var content = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json");
 
-        var response = await Http.PostAsync("http://localhost:5023/war", content);
+        var response = await Http.PostAsync("https://localhost:5023/war", content);
 
         gameResponse = await response.Content.ReadFromJsonAsync<WarOutput>();
         Console.WriteLine(gameResponse.Id);

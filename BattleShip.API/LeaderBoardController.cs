@@ -1,5 +1,6 @@
 using BattleShip.Models;
 using BattleShip.Models.DTO.Output;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ public class LeaderBoardController : Controller
 {
     
     [HttpGet]
+    [Authorize]
     public JsonHttpResult<List<LeaderBoardOutput>> GetLeaderBoard(LeaderboardContext context)
     {
         var leaderBoards = context.LeaderBoards
@@ -26,6 +28,7 @@ public class LeaderBoardController : Controller
     }
     
     [HttpPost]
+    [Authorize]
     public JsonHttpResult<LeaderBoardOutput> AddToLeaderBoard(LeaderboardContext context, LeaderBoard leaderBoard)
     {
         context.LeaderBoards.Add(leaderBoard);
