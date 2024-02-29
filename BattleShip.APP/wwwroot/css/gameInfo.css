@@ -9,3 +9,16 @@
 .nickname {
   font-weight: bold;
 }
+
+.historyLine {
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
+  overflow: auto;
+}
+
+.historyCouple {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}

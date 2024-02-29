@@ -1,6 +1,7 @@
 ﻿@page "/game"
 @using BattleShip.Models.DTO.Output;
 @using BattleShip.Models.DTO.Input;
+@using BattleShip.Models.DTO.Enum;
 @using System.Text.Json
 @using System.Text.Json.Serialization
 @using BattleShip.Models.DTO.Output
@@ -26,6 +27,10 @@
   <div class="map mapPlayer">
 
 <div class="gridPlayer mapGrid">
+  @if (preview is null){
+
+
+  
     @for (int i = 0; i < 10; i++)
     {
         @for (int j = 0; j < 10; j++)
@@ -40,7 +45,25 @@
           }
 
         }
+    }}else{
+
+
+    @for (int i = 0; i < 10; i++)
+    {
+        @for (int j = 0; j < 10; j++)
+        {
+          int row = i;
+          int col = j;
+          var data = preview.AllySea.Hits.FirstOrDefault(h => h.X == row && h.Y == col);
+          if(data != null){
+            <div  class="cell @(data.Reached ? "hit" :  "miss" ) @(IsBorderCell(row, col, 10) ? "isBorder" : "")"></div>
+          }else{
+            <div  class="cell @(IsBorderCell(row, col, 10) ? "isBorder" : "")"></div>
+          }
+
+        }
     }
+  }
 </div>
 
 </div>
@@ -49,6 +72,12 @@
 
 <p class="nickname">Your ennemy</p>
 <div class="grid">
+
+  @if (preview is null){
+
+
+
+  
     @for (int i = 0; i < 10; i++)
     {
         @for (int j = 0; j < 10; j++)
@@ -56,6 +85,7 @@
           int row = i;
           int col = j;
           string ennemyData;
+
           if(ennemyGrid[row, col] == true){
             ennemyData = "O";
           }else if(ennemyGrid[row, col] == false){
@@ -66,13 +96,43 @@
           <div @onclick="()=>ButtonPressed(row,col)" class="cell @(ennemyData == "O" ? "hit" : ennemyData == "X" ? "miss": "")"></div>
         }
     }
+  }else{
 
+    @for (int i = 0; i < 10; i++)
+    {
+        @for (int j = 0; j < 10; j++)
+        {
+          int row = i;
+          int col = j;
+          string ennemyData;
+
+          var data = preview.EnemySea.Hits.FirstOrDefault(h => h.X == row && h.Y == col);
+          if(ennemyGrid[row, col] == true){
+            ennemyData = "O";
+          }else if(ennemyGrid[row, col] == false){
+            ennemyData = "X";
+          }else{
+            ennemyData = "";
+          }
+          if(data != null)
+          {
+            <div class="cell @(data.Reached ? "hit" : "miss")"></div>
+             }
+          else{
+
+            <div class="cell "></div>
+          }
+
+        }
+    }
+
+  }
 </div>
 
 <p class="nickname">You</p>
 </div>
 
-<GameInfo />
+<GameInfo CallbackFunction=@CallbackMethod gameId=@gameResponse.Id @key=@history history=@history />
 
 </div>
     }
@@ -86,9 +146,29 @@
     private WarOutput gameResponse;
     private AiBlastOutput[,] ennemyPlays = new AiBlastOutput[10,10];
     private bool status;
+    public WarHistoryOutput history;
+    public WarHistoryOutput preview;
 
     protected override bool ShouldRender() => shouldRender;
 
+    private async void CallbackMethod(int wave)
+    {
+
+      if(wave == -1){
+        preview = null;
+      }else{
+
+      Console.WriteLine($"WAVE : {wave}");
+        var historyResponse = await Http.GetFromJsonAsync<WarHistoryOutput>($"http://localhost:5023/war/history/{gameResponse.Id}?wave={wave}");
+    
+    
+        // Store history data in a variable named history
+        preview = historyResponse;
+
+      }
+
+        StateHasChanged(); // Ensure the component re-renders after data is fetched
+    }
 
     public bool IsBorderCell(int row, int col, int gridSize)
 {
@@ -107,6 +187,22 @@
     // If the cell is not on any border
     return false;
 }
+
+    protected async Task GetHistory()
+    {
+
+        Console.WriteLine(history); 
+        // Make the HTTP request to get history data
+        var historyResponse = await Http.GetFromJsonAsync<WarHistoryOutput>($"http://localhost:5023/war/history/{gameResponse.Id}");
+    
+    
+        Console.WriteLine(historyResponse.AllySea.Hits.Count);
+        // Store history data in a variable named history
+        history = historyResponse;
+        preview = null;
+                StateHasChanged(); // Ensure the component re-renders after data is fetched
+    }
+
 
     protected async void ButtonPressed(int row, int col){
     var requestData = new BlastInput { PosX = row, PosY = col };
@@ -129,6 +225,8 @@
         ennemyPlays[blastData.AiBlast.X, blastData.AiBlast.Y] = blastData.AiBlast; 
         status = blastData.Over;
 
+
+      GetHistory();
         StateHasChanged();
     }
     else
@@ -142,17 +240,29 @@
 
     protected override async Task OnInitializedAsync()
     {
-        gameResponse = await Http.GetFromJsonAsync<WarOutput>("http://localhost:5023/war");
+
+        var requestData = new WarInput { Difficulty = Difficulty.Hard };
+
+    var jsonRequest = JsonSerializer.Serialize(requestData);
+    
+    // Create a StringContent with the serialized JSON
+    var content = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json");
+
+        var response = await Http.PostAsync("http://localhost:5023/war", content);
+
+        gameResponse = await response.Content.ReadFromJsonAsync<WarOutput>();
+        Console.WriteLine(gameResponse.Id);
         
         foreach (var ship in gameResponse.Ships)
         {
             foreach (var position in ship.Positions)
             {
-                int row = position[0];
-                int col = position[1];
+              int row = position.X;
+              int col = position.Y;  
                 grid[row, col] = ship.Letter;
             }
         }
+
  
 
         shouldRender = true;

@@ -1,7 +1,51 @@
 @page "/GameInfo"
-
+@using BattleShip.Models.DTO.Output;
+@using BattleShip.Models.DTO.Input;
 
 
 <div class="mainInfo">
   <p>History</p>
+  <p>Game : @gameId</p>
+ 
+  @if (history is null){
+  }else{
+
+  <div class="historyLine">
+
+    @for (int i = 0; i < history.AllySea.Hits.Count; i++)
+      {
+        int wave = i+1;
+        <div class="historyCouple" @onclick="()=>InvokeCallback(wave)">
+        <p>@(i+1)</p>
+        <p>@history.EnemySea.Hits[i].X - @history.EnemySea.Hits[i].Y</p>
+        <p>@history.AllySea.Hits[i].X - @history.AllySea.Hits[i].Y</p>
+      </div>
+      }
+  </div>
+  }
 </div>
+
+
+@code{
+
+  [Parameter]
+  public int gameId { get; set; }
+
+
+  [Parameter]
+  public WarHistoryOutput history { get; set; }
+
+  [Parameter]
+  public Action<int> CallbackFunction { get; set; }
+
+
+    private void InvokeCallback(int wave)
+    {
+        // Invoke the callback function with a parameter
+        if(wave == history.AllySea.Hits.Count){
+          CallbackFunction?.Invoke(-1);
+        }else{
+          CallbackFunction?.Invoke(wave);
+        }
+    }
+}
