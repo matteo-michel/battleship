@@ -8,11 +8,11 @@
 - [ ] FRONT: ajouter des images de bateau plutot que des lettres
 - [ ] Multi 
   - [ ] Ajouter du multi-joueur
-  - [ ] Ajouter de la sécurité et une gestion des users
-  - [ ] Ajouter un leaderboard
+  - [X] Ajouter de la sécurité et une gestion des users
+  - [X] Ajouter un leaderboard
 - [ ] IA
   - [X] Améliorer le comportement de l'IA
-  - [ ] Rajouter des niveaux de difficulté
+  - [X] Rajouter des niveaux de difficulté
 
 ## Feature
 - [ ] ajouter des bonus

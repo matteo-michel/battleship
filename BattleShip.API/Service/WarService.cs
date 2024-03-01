@@ -1,6 +1,5 @@
 using BattleShip.Models;
 using BattleShip.Models.DTO.Enum;
-using BattleShip.Models.DTO.Output;
 
 namespace BattleShip.API.Service;
 

@@ -19,6 +19,24 @@ public class SeaService
         sea = GenerateRandomGrid(sea);
         return sea;
     }
+
+    public Sea CloneSea(Sea sea)
+    {
+        var newSea = new Sea()
+        {
+            Size = sea.Size,
+            Grid = new char[sea.Size, sea.Size],
+            Pirate = new Pirate() { Name = sea.Pirate.Name, Ships = new List<Ship>() }
+        };
+        for (int i = 0; i < sea.Size; i++)
+        {
+            for (int j = 0; j < sea.Size; j++)
+            {
+                newSea.Grid[i, j] = sea.Grid[i, j];
+            }
+        }
+        return newSea;
+    }
     
     public Sea FillSeaWithEmptyValue(Sea sea)
     {

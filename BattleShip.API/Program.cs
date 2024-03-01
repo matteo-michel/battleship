@@ -9,21 +9,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<WarService>();
+builder.Services.AddSingleton<FleetService>();
 builder.Services.AddSingleton<SeaService>();
 builder.Services.AddSingleton<PirateService>();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<LeaderboardContext>();
-
-// builder.Services.AddCors(options =>
-// {
-//     options.AddPolicy("AllowAnyOrigin",
-//         builder =>
-//         {
-//             builder.AllowAnyOrigin()
-//                    .AllowAnyHeader()
-//                    .AllowAnyMethod();
-//         });
-// });
 
 builder.Services.AddCors();
 
@@ -59,13 +49,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
 app.UseCors((c) =>
 {
     c.AllowAnyMethod();
     c.AllowAnyHeader();
     c.AllowAnyOrigin();
 });
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
