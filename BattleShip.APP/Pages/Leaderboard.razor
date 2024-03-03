@@ -3,7 +3,8 @@
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using BattleShip.Models.DTO.Output;
-
+@using Grpc.Core;
+@inject LeaderBoardService.LeaderBoardServiceClient LeaderBoardClient
 @inject HttpClient Http
 
 
@@ -11,32 +12,44 @@
 
 
 
-<p></p>
 <div class="leaderboard">
+
+  @if (Leaderboards != null){
+
+
+  
     <h1>Leaderboard</h1>
-    @for (int i = 0; i < @Leaderboards.Length; i++)
-      {
-        int index = i;
+
+    @foreach (var entry in Leaderboards.LeaderBoards){
+
         <div class="leaderboard-item">
-            <div class="leaderboard-item-name">@Leaderboards[index].Name</div>
-            <div class="leaderboard-item-score">@Leaderboards[index].Score</div>
+            <div class="leaderboard-item-name">@entry.Name</div>
+            <div class="leaderboard-item-score">@entry.Score</div>
         </div>
-      }
+
+    }
+
+  }else{
+    <p>Loading</p>
+  }
 </div>
+
 @code{
 
 
-    protected LeaderBoardOutput[] Leaderboards;
-    
+     protected LeaderBoardList Leaderboards;
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            Leaderboards = await Http.GetFromJsonAsync<LeaderBoardOutput[]>("leaderboard");
+            // Call the GetLeaderBoard gRPC method
+            Leaderboards = await LeaderBoardClient.GetLeaderBoardAsync(new Empty());
         }
-        catch (AccessTokenNotAvailableException exception)
+        catch (RpcException ex)
         {
-            exception.Redirect();
+            // Handle any errors from the gRPC call
+            // You can display an error message, log the error, etc.
         }
     }
 }

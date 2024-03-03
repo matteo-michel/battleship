@@ -5,6 +5,7 @@ using BattleShip.APP;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Grpc.Net.Client.Web;
 
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -39,7 +40,7 @@ builder.Services.AddScoped(sp =>
     var httpClient = new HttpClient(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
     var channel = GrpcChannel.ForAddress("https://localhost:5023", new GrpcChannelOptions { HttpClient = httpClient });
 
-    return new BattleshipService.BattleshipServiceClient(channel);
+    return new LeaderBoardService.LeaderBoardServiceClient(channel);
 });
 
 await builder.Build().RunAsync();
