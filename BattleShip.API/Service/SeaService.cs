@@ -28,13 +28,7 @@ public class SeaService
             Grid = new char[sea.Size, sea.Size],
             Pirate = new Pirate() { Name = sea.Pirate.Name, Ships = new List<Ship>() }
         };
-        for (int i = 0; i < sea.Size; i++)
-        {
-            for (int j = 0; j < sea.Size; j++)
-            {
-                newSea.Grid[i, j] = sea.Grid[i, j];
-            }
-        }
+        newSea = FillSeaWithEmptyValue(newSea);
         return newSea;
     }
     
@@ -122,6 +116,19 @@ public class SeaService
                 }
             }
         }
+        return sea;
+    }
+    
+    public Sea FillSeaWithShips(Sea sea)
+    {
+        foreach (Ship ship in sea.Pirate.Ships)
+        {
+            foreach (ShipPosition position in ship.Positions)
+            {
+                sea.Grid[position.X, position.Y] = ship.Letter;
+            }
+        }
+
         return sea;
     }
     

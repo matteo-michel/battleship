@@ -25,6 +25,8 @@ public class FleetService
             tmpSea.Pirate.Ships.Add(newShip);
         }
 
+        tmpSea = SeaService.FillSeaWithShips(tmpSea);
+
         return tmpSea;
     }
 }
