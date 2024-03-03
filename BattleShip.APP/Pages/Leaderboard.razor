@@ -16,7 +16,6 @@
 
   @if (Leaderboards != null){
 
-
   
     <h1>Leaderboard</h1>
 
@@ -43,13 +42,12 @@
     {
         try
         {
-            // Call the GetLeaderBoard gRPC method
             Leaderboards = await LeaderBoardClient.GetLeaderBoardAsync(new Empty());
         }
         catch (RpcException ex)
         {
-            // Handle any errors from the gRPC call
-            // You can display an error message, log the error, etc.
+
+          Console.WriteLine(ex);
         }
     }
 }

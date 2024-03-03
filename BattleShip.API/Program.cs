@@ -1,6 +1,7 @@
 using BattleShip.API;
 using BattleShip.API.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Grpc.AspNetCore.Web;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,8 +58,8 @@ app.UseCors((c) =>
     c.AllowAnyHeader();
     c.AllowAnyOrigin();
 });
-
-app.MapGrpcService<LeaderBoardGrpcService>();
+app.UseGrpcWeb();
+app.MapGrpcService<LeaderBoardGrpcService>().EnableGrpcWeb();
 
 app.UseHttpsRedirection();
 

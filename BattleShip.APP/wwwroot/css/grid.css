@@ -20,10 +20,31 @@ body {
   margin: 0%;
 }
 
+.gridEasy {
+  display: grid;
+  grid-template-columns: repeat(
+    8,
+    auto
+  ); /* You can adjust the number of columns as needed */
+  grid-template-rows: repeat(8, 1fr); /* Use fractional units for rows */
+  width: calc(85vh * (8 / 8));
+  height: 85vh; /* Set height to 100% of viewport height */
+  padding: 0%;
+  margin: 0%;
+}
+
 .gridPlayer {
   display: grid;
   grid-template-columns: repeat(10, 25px);
   grid-template-rows: repeat(10, 25px);
+  padding: 0%;
+  margin: 0%;
+}
+
+.gridPlayerEasy {
+  display: grid;
+  grid-template-columns: repeat(8, 25px);
+  grid-template-rows: repeat(8, 25px);
   padding: 0%;
   margin: 0%;
 }
