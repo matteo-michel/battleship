@@ -1,4 +1,4 @@
-﻿@page "/game/{DifficultyLevel}/{Pseudo}"
+﻿@page "/game/{DifficultyLevel}/{IsPlaced}"
 @using BattleShip.Models.DTO.Output;
 @using BattleShip.Models.DTO.Input;
 @using BattleShip.Models.DTO.Enum;
@@ -8,19 +8,78 @@
 @inject IHttpClientFactory ClientFactory
 @inject HttpClient Http
 
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@attribute [Authorize]
+
 
 
 <link rel="stylesheet" href="css/grid.css">
 <link rel="stylesheet" href="css/gameInfo.css">
 
 
+<AuthorizeView>
+    <Authorized>
 @if (grid is null){
     <p>Loading...</p>
   }
   else{
+
+
+
 @if(status){
   <p>FIN DE LA GAME</p>
 }
+
+
+if(PlaceShips){
+
+<div class="main">
+
+
+  <div class="map">
+
+<p class="nickname">Place your ships !</p>
+<div class="grid">
+
+  @for (int i = 0; i < 10; i++)
+    {
+        @for (int j = 0; j < 10; j++)
+        {
+          int row = i;
+          int col = j;
+          string data = grid[row,col];
+
+          Console.WriteLine(data);
+          if(ennemyPlays[row,col] != null){
+            <div  class="cell @(ennemyPlays[row,col].Hit ? "hit" : ennemyPlays[row,col] != null ? "miss" : "") @(IsBorderCell(row, col, 10) ? "isBorder" : "")"></div>
+          }else{
+            <div @onclick="()=>UpdateGrid(row,col)" class="cell @(IsBorderCell(row, col, 10) ? "isBorder" : "") @(data != null ? "ship" : "")"></div>
+          }
+
+        }
+    }</div>
+
+<p class="nickname">You</p>
+</div>
+
+<div>
+
+  @for(int i = 0; i < 5; i++){
+    int index = i;
+      <div>
+  <p class="textPlace">Ship @(index+1)</p>
+  <button class="buttonPlace" @onclick="()=>HandlePlacement(index+1,0)">Vertical</button>
+  <button class="buttonPlace" @onclick="()=>HandlePlacement(index+1,1)">Horizontal</button>
+  </div>
+
+  }
+  <button @onclick="()=>HandleSave()" class="buttonPlace marginPlace">Save</button>
+</div>
+
+</div>
+
+}else{
 
 <div class="main">
 
@@ -29,8 +88,6 @@
 <div class="gridPlayer mapGrid">
   @if (preview is null){
 
-
-  
     @for (int i = 0; i < 10; i++)
     {
         @for (int j = 0; j < 10; j++)
@@ -57,10 +114,12 @@
           int row = i;
           int col = j;
           var data = preview.AllySea.Hits.FirstOrDefault(h => h.X == row && h.Y == col);
+
+          string ships = grid[row,col];
           if(data != null){
             <div  class="cell @(data.Reached ? "hit" :  "miss" ) @(IsBorderCell(row, col, 10) ? "isBorder" : "")"></div>
           }else{
-            <div  class="cell @(IsBorderCell(row, col, 10) ? "isBorder" : "")"></div>
+            <div  class="cell @(IsBorderCell(row, col, 10) ? "isBorder" : "") @(ships != null ? "ship":"")"></div>
           }
 
         }
@@ -137,7 +196,13 @@
 <GameInfo CallbackFunction=@CallbackMethod gameId=@gameResponse.Id @key=@history history=@history />
 
 </div>
+
+
+}
     }
+
+</Authorized>
+</AuthorizeView>
 
 
 @code{
@@ -151,14 +216,144 @@
     public WarHistoryOutput history;
     public WarHistoryOutput preview;
     private int score = 100;
+    private int placementDirection; // 0 = vertical 1 = horizontal
+    private int placementNumber = 1;
+
+    private ShipInput[] newPlacement = new ShipInput[5];
 
     [Parameter]
     public string DifficultyLevel { get ; set;}
 
     [Parameter]
-    public string Pseudo { get ; set;}
+    public string IsPlaced { get ; set;}
+
+
+    private bool PlaceShips;
+    public string Pseudo;
 
     protected override bool ShouldRender() => shouldRender;
+
+
+    private async void HandleSave(){
+
+
+    // Serialize the object to JSON
+    var fleetInput = new FleetInput { Ships = newPlacement.ToList() };
+    var jsonRequest = JsonSerializer.Serialize(fleetInput);
+
+
+    
+    // Create a StringContent with the serialized JSON
+    var content = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json");
+    
+    // Send the POST request
+    var response = await Http.PutAsync($"https://localhost:5023/fleet/{gameResponse.Id}", content);
+
+    if (response.IsSuccessStatusCode)
+    {
+      PlaceShips = false;
+      StateHasChanged();
+    }
+    }
+
+    private void HandlePlacement(int number, int direction){
+      placementDirection = direction;
+      placementNumber = number;
+    }
+
+
+    private void DeleteExistingCells(string letter)
+{
+    const int gridSize = 10; // Assuming a 10x10 grid
+
+    // Iterate through all cells in the grid
+    for (int row = 0; row < gridSize; row++)
+    {
+        for (int col = 0; col < gridSize; col++)
+        {
+            // Check if the cell contains the specified letter
+            if (grid[row, col] == letter)
+            {
+                // Remove the letter from the cell
+                grid[row, col] = null;
+            }
+        }
+    }
+
+}
+
+
+    private void UpdateGrid(int startX, int startY)
+{
+    const int gridSize = 10; // Assuming a 10x10 grid
+
+    // Define the direction offsets
+    int rowOffset = placementDirection == 0 ? 1 : 0;
+    int colOffset = placementDirection == 0 ? 0 : 1;
+
+    // Define the number of cells to update in the chosen direction
+    int cellsToUpdate = placementNumber; // Assuming you want to update 5 cells
+    string letter;
+    if(placementNumber == 1){
+      letter = "A";
+    }else if(placementNumber == 2){
+      letter = "B";
+    }else if(placementNumber == 3){
+      letter = "C";
+    }else if(placementNumber == 4){
+      letter = "D";
+    }else{
+      letter = "E";
+    }
+
+    DeleteExistingCells(letter);
+
+        List<(int, int, string)> originalValues = new List<(int, int, string)>();
+        int[][] pos = new int[placementNumber][];
+
+        bool isCanceled = true;
+
+    // Update the grid
+    for (int i = 0; i < cellsToUpdate; i++)
+    {
+        int row = startX + i * rowOffset;
+        int col = startY + i * colOffset;
+
+        // Check if the cell is within the grid bounds
+        //
+        if (row >= 0 && row < gridSize && col >= 0 && col < gridSize && string.IsNullOrEmpty(grid[row, col]))
+        {
+
+            originalValues.Add((row, col, grid[row, col]));
+            // Update the grid cell value at the specified position
+            grid[row, col] = letter; // Replace 'newValue' with the value you want to set
+            pos[i] = new int[]{row, col};
+            isCanceled = false;
+
+        }
+        else
+        {
+
+           foreach (var (r, c, value) in originalValues)
+            {
+                grid[r, c] = value;
+            }
+
+            isCanceled = true;
+            // Exit the loop as further updates are not needed
+            break;
+            // Handle out-of-bounds case if needed
+            // For example: break; to stop updating further cells
+        }
+
+        if(!isCanceled){
+
+           newPlacement[placementNumber-1] = new ShipInput { Letter = letter[0], Size = placementNumber, Orientation = placementDirection == 0 ? 'V' : 'H', Positions = pos };
+
+        }
+    }
+}
+
 
     private async void CallbackMethod(int wave)
     {
@@ -268,6 +463,12 @@
     protected override async Task OnInitializedAsync()
     {
 
+        if(IsPlaced == "True"){
+          PlaceShips = true;
+        }else{
+          PlaceShips = false;
+        }
+
         var requestData = new WarInput { Difficulty = DifficultyLevel == "hard" ? Difficulty.Hard : Difficulty.Easy };
 
         var jsonRequest = JsonSerializer.Serialize(requestData);
@@ -286,7 +487,11 @@
             {
               int row = position.X;
               int col = position.Y;  
+
+              if(PlaceShips == false){
+
                 grid[row, col] = ship.Letter;
+              }
             }
         }
 

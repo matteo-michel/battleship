@@ -67,8 +67,7 @@ body {
 }
 
 .splash {
-  background-color: #333;
-  color: #fff;
+  color: white;
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
@@ -141,6 +140,67 @@ body {
 }
 
 .ship {
-  background-color: red;
-  background-image: none;
+  background-color: #b0e9fc;
+  text-align: center;
+  line-height: 50px;
+  margin: 0%;
+  padding: 0%;
+  user-select: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  background-image: url("/assets/Tiles/tile_73_ship.png");
+}
+
+.center {
+  height: 95vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.placementBoat {
+  margin-bottom: 1rem;
+}
+
+.buttonPlace {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.buttonPlace:hover {
+  background-color: #0056b3;
+}
+
+.marginPlace {
+  margin-top: 2rem;
+}
+
+.textPlace {
+  font-size: 1.2rem;
 }

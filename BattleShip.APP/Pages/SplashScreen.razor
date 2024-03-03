@@ -1,16 +1,20 @@
 @page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@attribute [Authorize]
 
 <link rel="stylesheet" href="css/grid.css">
 
-
+<AuthorizeView>
+    <Authorized>
 <div class="splash">
+
   <div class="menu">
     <h1>BattleShip</h1>
-    
-      <div class="difficulty">
-        <label for="pseudo">Votre pseudo</label>
-        <input type="text" id="pseudo" name="pseudo" value="" @onchange="PseudoChanged">
-      </div>
+
+    <div class="difficulty">
+      <label for="pseudo">Votre pseudo : @context.User.Identity.Name</label>
+    </div>
     <legend>Difficulté</legend>
 <div class="difficulty">
       <div>
@@ -21,23 +25,34 @@
         <input type="radio" id="hard" name="difficulty" value="hard" checked="@IsHardChecked" @onchange="RadioChanged">
         <label for="hard">Difficile</label>
       </div>
-    </div>    <div>
+    </div> 
+    <div class="placementBoat">
+    <input id="place" type="checkbox" checked="@IsPlacement" @onchange="PlaceChanged" >
+    <label for="place">Placer ses bateaux</label>
+  </div>
+    <div>
       <button @onclick="NavigateToGame" class="playButton">Jouer</button>
       <button @onclick="NavigateToLeaderboard" class="leaderboardButton">Leaderboard</button>
     </div>
   </div>
 </div>
-
+</Authorized>
+</AuthorizeView>
 
 @code{
 
     [Inject]
     private NavigationManager NavigationManager { get; set; }
 
+    private bool IsPlacement = false;
     private string difficulty = "easy"; // Default value
-    private string pseudo = "";
     private bool IsEasyChecked => difficulty == "easy";
     private bool IsHardChecked => difficulty == "hard";
+
+
+    private void PlaceChanged(ChangeEventArgs e){
+      IsPlacement = (bool)e.Value;
+    }
 
         // Method to handle radio change event
     private void RadioChanged(ChangeEventArgs e)
@@ -46,15 +61,12 @@
     }
 
 
-    private void PseudoChanged(ChangeEventArgs e){
-      pseudo = e.Value.ToString();
-    }
 
     // Method to navigate to another page
     private void NavigateToGame()
     {
         // Navigate to the desired page
-        NavigationManager.NavigateTo($"/game/{difficulty}/{pseudo}");
+        NavigationManager.NavigateTo($"/game/{difficulty}/{IsPlacement}");
     }
 
     private void NavigateToLeaderboard(){
