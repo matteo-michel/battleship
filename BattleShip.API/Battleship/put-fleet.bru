@@ -1,0 +1,113 @@
+meta {
+  name: put-fleet
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{url2}}/fleet/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "Ships": [
+          {
+              "Letter": "A",
+              "Size": 1,
+              "Orientation": "V",
+              "Positions": [
+                  [
+                      0,
+                      9
+                  ]
+              ]
+          },
+          {
+              "Letter": "B",
+              "Size": 2,
+              "Orientation": "V",
+              "Positions": [
+                  [
+                      0,
+                      8
+                  ],
+                  [
+                      1,
+                      8
+                  ]
+              ]
+          },
+          {
+              "Letter": "C",
+              "Size": 3,
+              "Orientation": "V",
+              "Positions": [
+                  [
+                      0,
+                      7
+                  ],
+                  [
+                      1,
+                      7
+                  ],
+                  [
+                      2,
+                      7
+                  ]
+              ]
+          },
+          {
+              "Letter": "D",
+              "Size": 4,
+              "Orientation": "V",
+              "Positions": [
+                  [
+                      0,
+                      6
+                  ],
+                  [
+                      1,
+                      6
+                  ],
+                  [
+                      2,
+                      6
+                  ],
+                  [
+                      3,
+                      6
+                  ]
+              ]
+          },
+          {
+              "Letter": "E",
+              "Size": 5,
+              "Orientation": "V",
+              "Positions": [
+                  [
+                      0,
+                      5
+                  ],
+                  [
+                      1,
+                      5
+                  ],
+                  [
+                      2,
+                      5
+                  ],
+                  [
+                      3,
+                      5
+                  ],
+                  [
+                      4,
+                      5
+                  ]
+              ]
+          }
+      ]
+  }
+}
