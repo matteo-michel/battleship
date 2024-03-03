@@ -4,6 +4,7 @@
 @using BattleShip.Models.DTO.Enum;
 @using System.Text.Json
 @using System.Text.Json.Serialization
+@using System;
 @using BattleShip.Models.DTO.Output
 @inject IHttpClientFactory ClientFactory
 @inject HttpClient Http
@@ -35,7 +36,10 @@
 
       @if (status)
       {
-        <p>FIN DE LA GAME</p>
+        <div class="endGame">
+          <p class="contentEndGame">FIN DE LA PARTIE</p>
+        <button class="buttonPlace" @onclick="()=>NavigateHome()">Accueil</button>
+        </div>
       }
 
 
@@ -47,7 +51,7 @@
 
           <div class="map">
 
-            <p class="nickname">Place your ships !</p>
+            <p class="nickname">Placez vos bateaux !</p>
             <p>@gridSizes</p>
             <div class="@(gridSizes == 10 ? "grid":"gridEasy")">
 
@@ -75,7 +79,7 @@
             {
               int index = i;
               <div>
-                <p class="textPlace">Ship @(index + 1)</p>
+                <p class="textPlace">Bateau @(index + 1)</p>
                 <button class="buttonPlace" @onclick="()=>HandlePlacement(index+1,0)">Vertical</button>
                 <button class="buttonPlace" @onclick="()=>HandlePlacement(index+1,1)">Horizontal</button>
               </div>
@@ -151,7 +155,7 @@
 
           <div class="map">
 
-            <p class="nickname">Your ennemy</p>
+            <p class="nickname">Votre ennemi</p>
             <div class="@(gridSizes == 10 ? "grid":"gridEasy")">
 
               @if (preview is null)
@@ -225,7 +229,7 @@
               }
             </div>
 
-            <p class="nickname">You</p>
+            <p class="nickname">Vous</p>
           </div>
 
           <GameInfo CallbackFunction=@CallbackMethod gameId=@gameResponse.Id @key=@history history=@history />
@@ -262,6 +266,9 @@
   [Parameter]
   public string IsPlaced { get; set; }
 
+
+  [Inject]
+  private NavigationManager NavigationManager { get; set; }
   private int gridSizes;
 
   private bool PlaceShips;
@@ -290,6 +297,11 @@
       PlaceShips = false;
       StateHasChanged();
     }
+  }
+
+  private void NavigateHome(){
+      NavigationManager.NavigateTo("/");
+
   }
 
   private void HandlePlacement(int number, int direction)
@@ -495,7 +507,7 @@
 
         var responseLeader = await LeaderBoardClient.AddLeaderBoardAsync(new LeaderBoard
           {
-            Id = Pseudo,
+            Id = Guid.NewGuid().ToString(),
             Name = Pseudo,
             Score =
           score
