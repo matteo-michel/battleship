@@ -105,26 +105,5 @@ public static class WarController
         
             };
         });
-
-        // app.MapPut("/war/{id}", (
-        //     WarService warService,
-        //     SeaService seaService,
-        //     int id,
-        //     [FromBody] SeaInput seaInput
-        //     ) =>
-        // {
-        //     War war = warService.Wars[id];
-        //     // create temp sea to avoid changing the original one
-        //     Sea tempSea = new Sea(war.Seas[0].Grid.Length, war.Seas[0].Player, false);
-        //     
-        //     // add the new ships in this temp sea and check they dont overlap. For each ship, get the letter and the size from the legacy ship
-        //     foreach (ShipInput ship in seaInput.Ships)
-        //     {
-        //         Ship newShip = new Ship(ship.Letter, ship.Positions.Length, ship.Orientation);
-        //         newShip.Position = ship.Positions[0];
-        //         tempSea.AddShip(newShip);
-        //     }
-        //     
-        // });
     }
 }
