@@ -10,6 +10,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<WarService>();
 builder.Services.AddSingleton<FleetService>();
+builder.Services.AddSingleton<ShipService>();
 builder.Services.AddSingleton<SeaService>();
 builder.Services.AddSingleton<PirateService>();
 builder.Services.AddControllers();
