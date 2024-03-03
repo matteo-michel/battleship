@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+message Empty {}
+
+message LeaderBoard {
+  string id = 1;
+  string name = 2;
+  int32 score = 3;
+}
+
+message LeaderBoardOutput {
+  string name = 1;
+  int32 score = 2;
+}
+
+message LeaderBoardList {
+  repeated LeaderBoardOutput leader_boards = 1;
+}
+
+service LeaderBoardService {
+  rpc GetLeaderBoard(Empty) returns (LeaderBoardList);
+  rpc AddLeaderBoard(LeaderBoard) returns (LeaderBoardOutput);
+}

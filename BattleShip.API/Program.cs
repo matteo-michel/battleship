@@ -15,6 +15,7 @@ builder.Services.AddSingleton<SeaService>();
 builder.Services.AddSingleton<PirateService>();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<LeaderboardContext>();
+builder.Services.AddGrpc();
 
 builder.Services.AddCors();
 
@@ -56,6 +57,8 @@ app.UseCors((c) =>
     c.AllowAnyHeader();
     c.AllowAnyOrigin();
 });
+
+app.MapGrpcService<LeaderBoardGrpcService>();
 
 app.UseHttpsRedirection();
 

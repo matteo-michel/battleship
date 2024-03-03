@@ -12,7 +12,7 @@ public class LeaderBoardController : Controller
 {
     
     [HttpGet]
-    [Authorize]
+    // [Authorize]
     public JsonHttpResult<List<LeaderBoardOutput>> GetLeaderBoard(LeaderboardContext context)
     {
         var leaderBoards = context.LeaderBoards
@@ -28,7 +28,7 @@ public class LeaderBoardController : Controller
     }
     
     [HttpPost]
-    [Authorize]
+    // [Authorize]
     public JsonHttpResult<LeaderBoardOutput> AddToLeaderBoard(LeaderboardContext context, LeaderBoard leaderBoard)
     {
         context.LeaderBoards.Add(leaderBoard);
