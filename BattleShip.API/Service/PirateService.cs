@@ -9,12 +9,7 @@ public class PirateService
     {
         Pirate pirate = new Pirate() { Name = name };
         pirate = generateFleet(pirate);
-
-        if (isBot)
-        {
-            pirate.isBot = true;
-            pirate = generateBlastLocations(pirate);
-        }
+        pirate.isBot = isBot;
 
         return pirate;
     }
@@ -34,12 +29,12 @@ public class PirateService
         return pirate;
     }
     
-    public Pirate generateBlastLocations(Pirate pirate)
+    public Pirate GenerateBlastLocations(Pirate pirate, int size)
     {
         pirate.BlastLocations = new List<int[]>();
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < size; i++)
         {
-            for (int j = 0; j < 10; j++)
+            for (int j = 0; j < size; j++)
             {
                 pirate.BlastLocations.Add(new int[] {i, j});
             }

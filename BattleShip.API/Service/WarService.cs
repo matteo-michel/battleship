@@ -19,6 +19,11 @@ public class WarService
     {
         var pirate = _pirateService.instanciatePirate("Matteo");
         var navy = _pirateService.instanciatePirate("Maid", true);
+
+        if (navy.isBot)
+        {
+            navy = _pirateService.GenerateBlastLocations(navy, GetSizebyDifficutly(difficulty));
+        }
             
         var pirateSea = _seaService.CreateSea(GetSizebyDifficutly(difficulty), pirate);
         var navySea = _seaService.CreateSea(GetSizebyDifficutly(difficulty), navy);
