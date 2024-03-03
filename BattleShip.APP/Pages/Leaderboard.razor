@@ -14,40 +14,44 @@
 
 <div class="leaderboard">
 
-  @if (Leaderboards != null){
+  @if (Leaderboards != null)
+  {
 
-  
+
     <h1>Leaderboard</h1>
 
-    @foreach (var entry in Leaderboards.LeaderBoards){
+    @foreach (var entry in Leaderboards.LeaderBoards)
+    {
 
-        <div class="leaderboard-item">
-            <div class="leaderboard-item-name">@entry.Name</div>
-            <div class="leaderboard-item-score">@entry.Score</div>
-        </div>
+      <div class="leaderboard-item">
+        <div class="leaderboard-item-name">@entry.Name</div>
+        <div class="leaderboard-item-score">@entry.Score</div>
+      </div>
 
     }
 
-  }else{
+  }
+  else
+  {
     <p>Loading</p>
   }
 </div>
 
-@code{
+@code {
 
 
-     protected LeaderBoardList Leaderboards;
+  protected LeaderBoardList Leaderboards;
 
-    protected override async Task OnInitializedAsync()
+  protected override async Task OnInitializedAsync()
+  {
+    try
     {
-        try
-        {
-            Leaderboards = await LeaderBoardClient.GetLeaderBoardAsync(new Empty());
-        }
-        catch (RpcException ex)
-        {
-
-          Console.WriteLine(ex);
-        }
+      Leaderboards = await LeaderBoardClient.GetLeaderBoardAsync(new Empty());
     }
+    catch (RpcException ex)
+    {
+
+      Console.WriteLine(ex);
+    }
+  }
 }

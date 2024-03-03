@@ -22,7 +22,7 @@
 <AuthorizeView>
   <Authorized>
     @{
-Pseudo = @context.User.Identity.Name;
+      Pseudo = @context.User.Identity.Name;
     }
     @if (grid is null)
     {
@@ -59,8 +59,8 @@ Pseudo = @context.User.Identity.Name;
                   int col = j;
                   string data = grid[row, col];
 
-                    <div @onclick="()=>UpdateGrid(row,col)"
-                      class="cell @(IsBorderCell(row, col, 8) ? "isBorder" : "") @(data != null ? "ship" : "")"></div>
+                  <div @onclick="()=>UpdateGrid(row,col)"
+                    class="cell @(IsBorderCell(row, col, 8) ? "isBorder" : "") @(data != null ? "ship" : "")"></div>
 
                 }
               }
@@ -279,12 +279,11 @@ Pseudo = @context.User.Identity.Name;
     var jsonRequest = JsonSerializer.Serialize(fleetInput);
 
 
-
     // Create a StringContent with the serialized JSON
     var content = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json");
 
     // Send the POST request
-    var response = await Http.PutAsync($"https://localhost:5023/fleet/{gameResponse.Id}", content);
+    var response = await Http.PutAsync($"fleet/{gameResponse.Id}", content);
 
     if (response.IsSuccessStatusCode)
     {
@@ -323,14 +322,15 @@ Pseudo = @context.User.Identity.Name;
 
   private void UpdateGrid(int startX, int startY)
   {
-    int gridSize = gridSizes; // Assuming a 10x10 grid
+    int gridSize = gridSizes;
 
     // Define the direction offsets
     int rowOffset = placementDirection == 0 ? 1 : 0;
     int colOffset = placementDirection == 0 ? 0 : 1;
 
     // Define the number of cells to update in the chosen direction
-    int cellsToUpdate = placementNumber; // Assuming you want to update 5 cells
+    int cellsToUpdate = placementNumber;
+
     string letter;
     if (placementNumber == 1)
     {
@@ -366,14 +366,15 @@ Pseudo = @context.User.Identity.Name;
       int row = startX + i * rowOffset;
       int col = startY + i * colOffset;
 
-      // Check if the cell is within the grid bounds
-      //
+
       if (row >= 0 && row < gridSize && col >= 0 && col < gridSize && string.IsNullOrEmpty(grid[row, col]))
       {
 
         originalValues.Add((row, col, grid[row, col]));
+
         // Update the grid cell value at the specified position
-        grid[row, col] = letter; // Replace 'newValue' with the value you want to set
+        grid[row, col] = letter; 
+
         pos[i] = new int[] { row, col };
         isCanceled = false;
 
@@ -381,16 +382,15 @@ Pseudo = @context.User.Identity.Name;
       else
       {
 
+        // Revert
         foreach (var (r, c, value) in originalValues)
         {
           grid[r, c] = value;
         }
 
         isCanceled = true;
-        // Exit the loop as further updates are not needed
         break;
-        // Handle out-of-bounds case if needed
-        // For example: break; to stop updating further cells
+
       }
 
       if (!isCanceled)
@@ -423,7 +423,7 @@ Pseudo = @context.User.Identity.Name;
 
       Console.WriteLine($"WAVE : {wave}");
       var historyResponse = await
-      Http.GetFromJsonAsync<WarHistoryOutput>($"https://localhost:5023/war/history/{gameResponse.Id}?wave={wave}");
+      Http.GetFromJsonAsync<WarHistoryOutput>($"war/history/{gameResponse.Id}?wave={wave}");
 
 
       // Store history data in a variable named history
@@ -455,17 +455,16 @@ Pseudo = @context.User.Identity.Name;
   protected async Task GetHistory()
   {
 
-    Console.WriteLine(history);
     // Make the HTTP request to get history data
     var historyResponse = await
-    Http.GetFromJsonAsync<WarHistoryOutput>($"https://localhost:5023/war/history/{gameResponse.Id}");
+    Http.GetFromJsonAsync<WarHistoryOutput>($"war/history/{gameResponse.Id}");
 
 
     Console.WriteLine(historyResponse.AllySea.Hits.Count);
-    // Store history data in a variable named history
+
     history = historyResponse;
     preview = null;
-    StateHasChanged(); // Ensure the component re-renders after data is fetched
+    StateHasChanged(); 
   }
 
 
@@ -481,12 +480,12 @@ Pseudo = @context.User.Identity.Name;
     var content = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json");
 
     // Send the POST request
-    var response = await Http.PostAsync($"https://localhost:5023/war/blast/{gameResponse.Id}", content);
+    var response = await Http.PostAsync($"war/blast/{gameResponse.Id}", content);
 
     // Check if the response is successful
     if (response.IsSuccessStatusCode)
     {
-      // Deserialize the JSON response into WarOutput object
+
       BlastOutput blastData = await response.Content.ReadFromJsonAsync<BlastOutput>();
       ennemyGrid[row, col] = blastData.Hit;
       ennemyPlays[blastData.AiBlast.X, blastData.AiBlast.Y] = blastData.AiBlast;
@@ -494,14 +493,13 @@ Pseudo = @context.User.Identity.Name;
       if (status)
       {
 
-
-
-        Console.WriteLine("ok");
-        Console.WriteLine(Pseudo);
-        Console.WriteLine("ok");
-        Console.WriteLine(score);
-        var responseLeader = await LeaderBoardClient.AddLeaderBoardAsync(new LeaderBoard { Id = Pseudo, Name = Pseudo, Score = score });
-        Console.WriteLine("ok");
+        var responseLeader = await LeaderBoardClient.AddLeaderBoardAsync(new LeaderBoard
+          {
+            Id = Pseudo,
+            Name = Pseudo,
+            Score =
+          score
+          });
 
       }
 
@@ -512,7 +510,6 @@ Pseudo = @context.User.Identity.Name;
     else
     {
       // Handle the case when the response is not successful
-      getBranchesError = true;
       Console.WriteLine($"Error: {response.StatusCode}");
     }
 
@@ -540,10 +537,9 @@ Pseudo = @context.User.Identity.Name;
 
     var jsonRequest = JsonSerializer.Serialize(requestData);
 
-    // Create a StringContent with the serialized JSON
     var content = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json");
 
-    var response = await Http.PostAsync("https://localhost:5023/war", content);
+    var response = await Http.PostAsync("war", content);
 
     gameResponse = await response.Content.ReadFromJsonAsync<WarOutput>();
     Console.WriteLine(gameResponse.Id);

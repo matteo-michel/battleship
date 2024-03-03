@@ -6,27 +6,30 @@
 <div class="mainInfo">
   <p class="historyText">History</p>
   <p class="historyText">Game : @gameId</p>
- 
-  @if (history is null){
-  }else{
 
-  <div class="historyLine">
+  @if (history is null)
+  {
+  }
+  else
+  {
 
-    @for (int i = 0; i < history.AllySea.Hits.Count; i++)
+    <div class="historyLine">
+
+      @for (int i = 0; i < history.AllySea.Hits.Count; i++)
       {
-        int wave = i+1;
-        <div class="historyCouple @(currentWave == wave ? "selectedHistory" : "")"  @onclick="()=>InvokeCallback(wave)">
-        <p class="idHistory">@(i+1).</p>
-        <p>@history.EnemySea.Hits[i].X - @history.EnemySea.Hits[i].Y</p>
-        <p>@history.AllySea.Hits[i].X - @history.AllySea.Hits[i].Y</p>
-      </div>
+        int wave = i + 1;
+        <div class="historyCouple @(currentWave == wave ? "selectedHistory" : "")" @onclick="()=>InvokeCallback(wave)">
+          <p class="idHistory">@(i + 1).</p>
+          <p>@history.EnemySea.Hits[i].X - @history.EnemySea.Hits[i].Y</p>
+          <p>@history.AllySea.Hits[i].X - @history.AllySea.Hits[i].Y</p>
+        </div>
       }
-  </div>
+    </div>
   }
 </div>
 
 
-@code{
+@code {
 
   [Parameter]
   public int gameId { get; set; }
@@ -40,14 +43,17 @@
 
   private int currentWave = -1;
 
-    private void InvokeCallback(int wave)
+  private void InvokeCallback(int wave)
+  {
+    // Invoke the callback function with a parameter
+    currentWave = wave;
+    if (wave == history.AllySea.Hits.Count)
     {
-        // Invoke the callback function with a parameter
-        currentWave = wave;
-        if(wave == history.AllySea.Hits.Count){
-          CallbackFunction?.Invoke(-1);
-        }else{
-          CallbackFunction?.Invoke(wave);
-        }
+      CallbackFunction?.Invoke(-1);
     }
+    else
+    {
+      CallbackFunction?.Invoke(wave);
+    }
+  }
 }

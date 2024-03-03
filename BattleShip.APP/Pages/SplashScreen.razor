@@ -6,72 +6,76 @@
 <link rel="stylesheet" href="css/grid.css">
 
 <AuthorizeView>
-    <Authorized>
-<div class="splash">
+  <Authorized>
+    <div class="splash">
 
-  <div class="menu">
-    <h1>BattleShip</h1>
+      <div class="menu">
+        <h1>BattleShip</h1>
 
-    <div class="difficulty">
-      <label for="pseudo">Votre pseudo : @context.User.Identity.Name</label>
-    </div>
-    <legend>Difficulté</legend>
-<div class="difficulty">
-      <div>
-        <input type="radio" id="easy" name="difficulty" value="easy" checked="@IsEasyChecked" @onchange="RadioChanged">
-        <label for="easy">Facile</label>
+        <div class="difficulty">
+          <label for="pseudo">Votre pseudo : @context.User.Identity.Name</label>
+        </div>
+        <legend>Difficulté</legend>
+        <div class="difficulty">
+          <div>
+            <input type="radio" id="easy" name="difficulty" value="easy" checked="@IsEasyChecked"
+              @onchange="RadioChanged">
+            <label for="easy">Facile</label>
+          </div>
+          <div>
+            <input type="radio" id="hard" name="difficulty" value="hard" checked="@IsHardChecked"
+              @onchange="RadioChanged">
+            <label for="hard">Difficile</label>
+          </div>
+        </div>
+        <div class="placementBoat">
+          <input id="place" type="checkbox" checked="@IsPlacement" @onchange="PlaceChanged">
+          <label for="place">Placer ses bateaux</label>
+        </div>
+        <div>
+          <button @onclick="NavigateToGame" class="playButton">Jouer</button>
+          <button @onclick="NavigateToLeaderboard" class="leaderboardButton">Leaderboard</button>
+        </div>
       </div>
-      <div>
-        <input type="radio" id="hard" name="difficulty" value="hard" checked="@IsHardChecked" @onchange="RadioChanged">
-        <label for="hard">Difficile</label>
-      </div>
-    </div> 
-    <div class="placementBoat">
-    <input id="place" type="checkbox" checked="@IsPlacement" @onchange="PlaceChanged" >
-    <label for="place">Placer ses bateaux</label>
-  </div>
-    <div>
-      <button @onclick="NavigateToGame" class="playButton">Jouer</button>
-      <button @onclick="NavigateToLeaderboard" class="leaderboardButton">Leaderboard</button>
     </div>
-  </div>
-</div>
-</Authorized>
+  </Authorized>
 </AuthorizeView>
 
-@code{
+@code {
 
-    [Inject]
-    private NavigationManager NavigationManager { get; set; }
+  [Inject]
+  private NavigationManager NavigationManager { get; set; }
 
-    private bool IsPlacement = false;
-    private string difficulty = "easy"; // Default value
-    private bool IsEasyChecked => difficulty == "easy";
-    private bool IsHardChecked => difficulty == "hard";
-
-
-    private void PlaceChanged(ChangeEventArgs e){
-      IsPlacement = (bool)e.Value;
-    }
-
-        // Method to handle radio change event
-    private void RadioChanged(ChangeEventArgs e)
-    {
-        difficulty = e.Value.ToString();
-    }
+  private bool IsPlacement = false;
+  private string difficulty = "easy"; // Default value
+  private bool IsEasyChecked => difficulty == "easy";
+  private bool IsHardChecked => difficulty == "hard";
 
 
+  private void PlaceChanged(ChangeEventArgs e)
+  {
+    IsPlacement = (bool)e.Value;
+  }
 
-    // Method to navigate to another page
-    private void NavigateToGame()
-    {
-        // Navigate to the desired page
-        NavigationManager.NavigateTo($"/game/{difficulty}/{IsPlacement}");
-    }
+  // Method to handle radio change event
+  private void RadioChanged(ChangeEventArgs e)
+  {
+    difficulty = e.Value.ToString();
+  }
 
-    private void NavigateToLeaderboard(){
 
-      NavigationManager.NavigateTo($"/leaderboard");
-    }
+
+  // Method to navigate to another page
+  private void NavigateToGame()
+  {
+    // Navigate to the desired page
+    NavigationManager.NavigateTo($"/game/{difficulty}/{IsPlacement}");
+  }
+
+  private void NavigateToLeaderboard()
+  {
+
+    NavigationManager.NavigateTo($"/leaderboard");
+  }
 
 }
